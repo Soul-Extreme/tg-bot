@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "lint": "python -m black src/"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "serverless-python-requirements": "^6.0.0"
+  }
+}

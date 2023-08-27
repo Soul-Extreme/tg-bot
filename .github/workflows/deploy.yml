@@ -1,0 +1,29 @@
+name: Deploy SE Telegram Bot
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Serverless-Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.11
+
+      - name: Serverless Deploy
+        uses: dhollerbach/actions.serverless-with-python-requirements@v2
+        env:
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          STAGE: dev
