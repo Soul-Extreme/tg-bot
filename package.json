@@ -3,7 +3,7 @@
     "lint": "python -m black src/"
   },
   "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
     "serverless-python-requirements": "^6.0.0"
   }
 }

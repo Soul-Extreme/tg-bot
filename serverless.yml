@@ -1,6 +1,3 @@
-org: soulextreme
-app: se-tg-bot
-
 service: se-tg-bot
 frameworkVersion: '3'
 
