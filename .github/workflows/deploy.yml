@@ -22,7 +22,6 @@ jobs:
           python-version: 3.9
 
       - name: Serverless Deploy
-        working-directory: src
         uses: dhollerbach/actions.serverless-with-python-requirements@v2
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
