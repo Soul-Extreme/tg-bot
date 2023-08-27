@@ -1,9 +1,10 @@
-import requests
+import json
 
 
 def hello(event, context):
-    response = requests.get("https://jsonplaceholder.typicode.com/todos/1")
-    res = {"event": event, "output": response.json(), "context": context}
+    body = {
+        "message": "Go Serverless v3.0! Your function executed successfully!",
+        "input": event,
+    }
 
-    print(res)
-    return None
+    return {"statusCode": 200, "body": json.dumps(body)}

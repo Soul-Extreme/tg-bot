@@ -1,0 +1,16 @@
+org: soulextreme
+app: se-tg-bot
+service: se-tg-bot
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: ap-southeast-1
+
+functions:
+  hello:
+    handler: handler.hello
+    timeout: 5 # seconds
+    memorySize: 128 # mb
