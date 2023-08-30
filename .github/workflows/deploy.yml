@@ -37,6 +37,12 @@ jobs:
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
           STAGE: dev
 
+      - name: Install Webhook Setter Dependencies
+        run: pip install requests
+
       - name: Set Webhook
-        run: |
-          curl --request POST --url https://api.telegram.org/${{ secrets.TELEGRAM_BOT_TOKEN }}/setWebhook --header 'content-type: application/json' --data '{"url": ${{ AWS_LAMBDA_TGBOT_ENDPOINT }}}'
+        run: | 
+          python src/set_webhook.py
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          AWS_LAMBDA_TGBOT_ENDPOINT: ${{ secrets.AWS_LAMBDA_TGBOT_ENDPOINT}}
