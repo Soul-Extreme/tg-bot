@@ -25,6 +25,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Setup Environment
+        run: |
+          echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> $GITHUB_ENV
+
       - name: Serverless Deploy
         uses: dhollerbach/actions.serverless-with-python-requirements@v2
         env:
@@ -32,3 +36,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
           STAGE: dev
+
+      - name: Set Webhook
+        run: |
+          curl --request POST --url https://api.telegram.org/${{ secrets.TELEGRAM_BOT_TOKEN }}/setWebhook --header 'content-type: application/json' --data '{"url": ${{ AWS_LAMBDA_TGBOT_ENDPOINT }}}'
