@@ -1,16 +1,19 @@
+# REQUIRED FOR LINK WITH SERVERLESS DASHBOARD
 org: soulextreme
 app: se-tg-bot
-service: se-tg-bot
 
+
+service         : se-tg-bot
 frameworkVersion: '3'
 
+# Cloud Provider
 provider:
-  name: aws
-  runtime: python3.9
-  region: ap-southeast-1
+  name    : aws
+  runtime : python3.11              
+  region  : ap-southeast-1          # Singapore
 
 functions:
-  hello:
-    handler: src/handler.hello
-    timeout: 5 # seconds
-    memorySize: 128 # mb
+  tg-bot:
+    handler   : src/tg-bot.handler
+    timeout   : 5                   # seconds
+    memorySize: 128                 # mb

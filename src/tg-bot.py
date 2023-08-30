@@ -1,9 +1,9 @@
 import json
 
 
-def hello(event, context):
+def handler(event, context):
     body = {
-        "message": "Hello World!",
+        "message": "Hello tg-bot!",
         "input": event,
     }
 
