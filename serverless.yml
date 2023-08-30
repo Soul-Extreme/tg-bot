@@ -1,18 +1,17 @@
-# REQUIRED FOR LINK WITH SERVERLESS DASHBOARD
 org: soulextreme
 app: se-tg-bot
 
 service: se-tg-bot
+
 frameworkVersion: '3'
 
-# Cloud Provider
 provider:
   name: aws
-  runtime: python3.10 # AWS Lambda supports up to Python 3.10
   region: ap-southeast-1  # Singapore
+  runtime: python3.10 # AWS Lambda supports up to Python 3.10
 
-  environment:
-    TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
+plugins:
+  - serverless-python-requirements
 
 functions:
   tg-bot:
@@ -20,10 +19,22 @@ functions:
     timeout: 30 # seconds
     memorySize: 128 # mb
     events:
-      - httpApi:
-          method: POST
+      - http:
           path: /tg-bot
+          method: post
           cors: true
+    environment:
+      TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
 
-plugins:
-  - serverless-python-requirements
+    package:
+      patterns:
+        - src/tg-bot.py
+        - '!node_modules/**'
+        - '!package.json'
+        - '!package-lock.json'
+        - 'requirements.txt'
+        - 'serverless.yml'
+        - '!README.md'
+        - '!.serverless/**'
+        - '!venv/**'
+        - '!.gitignore'
