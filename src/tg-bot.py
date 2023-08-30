@@ -40,8 +40,9 @@ async def main(event, context):
 
         return {"statusCode": 200, "body": "Success"}
     except Exception as error:
-        return {"statusCode": 500, "body": "Failure"}
+        return {"statusCode": 500, "body": error}
 
 
 def handler(event, context):
+    print(event)
     return asyncio.get_event_loop().run_until_complete(main(event, context))

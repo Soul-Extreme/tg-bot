@@ -17,9 +17,13 @@ provider:
 
 functions:
   tg-bot:
-    handler: tg-bot.handler
+    handler: src/tg-bot.handler
     timeout: 5  # seconds
     memorySize: 128 # mb
+    events:
+      - httpApi:
+          method: POST
+          path: /tg-bot
 
 plugins:
   - serverless-python-requirements
