@@ -20,6 +20,8 @@ functions:
     handler   : src/tg-bot.handler
     timeout   : 5                   # seconds
     memorySize: 128                 # mb
+    requirements:
+      file: src/requirements.txt
 
 plugins:
   - serverless-plugin-canary-deployments
