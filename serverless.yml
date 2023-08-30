@@ -2,7 +2,6 @@
 org: soulextreme
 app: se-tg-bot
 
-
 service: se-tg-bot
 frameworkVersion: '3'
 
@@ -18,12 +17,13 @@ provider:
 functions:
   tg-bot:
     handler: src/tg-bot.handler
-    timeout: 5  # seconds
+    timeout: 30 # seconds
     memorySize: 128 # mb
     events:
       - httpApi:
           method: POST
           path: /tg-bot
+          cors: true
 
 plugins:
   - serverless-python-requirements
