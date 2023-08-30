@@ -9,7 +9,7 @@ frameworkVersion: '3'
 # Cloud Provider
 provider:
   name    : aws
-  runtime : python3.11              
+  runtime : python3.10
   region  : ap-southeast-1          # Singapore
 
 functions:
