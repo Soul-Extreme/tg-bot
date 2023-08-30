@@ -45,4 +45,4 @@ jobs:
           python src/set_webhook.py
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          AWS_LAMBDA_TGBOT_ENDPOINT: ${{ secrets.AWS_LAMBDA_TGBOT_ENDPOINT}}
+          AWS_LAMBDA_TGBOT_ENDPOINT: ${{ secrets.TG_BOT_ENDPOINT }}

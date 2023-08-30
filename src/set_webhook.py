@@ -12,10 +12,10 @@ import os
 # ======================================================================================================================
 
 bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
-lambda_url = os.getenv("AWS_LAMBDA_TGBOT_ENDPOINT")
+apigw_url = os.getenv("TG_BOT_ENDPOINT")
 
 response = requests.get(
-    f"https://api.telegram.org/bot{bot_token}/setWebhook?url={lambda_url}"
+    f"https://api.telegram.org/bot{bot_token}/setWebhook?url={apigw_url}"
 )
 
 print(response)

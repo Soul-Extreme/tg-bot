@@ -1,48 +1,47 @@
 """
-File        : tg-boy.py
+File        : tg-bot.py
 Author      : Diren D Bharwani
 Date        : 2023-08-30
 
 Description : Entry point for the Telegram Bot.
 """
 
+import logging
 import json
 import os
-import asyncio
 
-from telegram import Update
-from telegram.ext import (
-    Application,
-    ApplicationBuilder,
-    ContextTypes,
-    CommandHandler,
-    filters,
-)
+import telebot
+
 
 # ======================================================================================================================
 
-tg_bot_app = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
+logger = telebot.logger
+telebot.logger.setLevel(logging.INFO)
+
+bot = telebot.TeleBot(os.getenv("TELEGRAM_BOT_TOKEN"), threaded=False)
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_chat_id = update.effective_chat.id
-    await context.bot.send_message(chat_id=user_chat_id, text=f"Hello {user_chat_id}!")
-
-
-async def main(event, context):
-    tg_bot_app.add_handler(CommandHandler("start", start))
-
-    try:
-        await tg_bot_app.initialize()
-        await tg_bot_app.process_update(
-            Update.de_json(json.loads(event["body"]), tg_bot_app.bot)
-        )
-
-        return {"statusCode": 200, "body": "Success"}
-    except Exception as error:
-        return {"statusCode": 500, "body": error}
+def process_event(event):
+    # Get telegram webhook json from event
+    request_body_dict = json.loads(event["body"])
+    # Parse updates from json
+    update = telebot.types.Update.de_json(request_body_dict)
+    # Run handlers and etc for updates
+    bot.process_new_updates([update])
 
 
 def handler(event, context):
-    print(event)
-    return asyncio.get_event_loop().run_until_complete(main(event, context))
+    # Process event from aws and respond
+    process_event(event)
+    return {"statusCode": 200}
+
+
+# Handle '/start' and '/help'
+@bot.message_handler(commands=["start"])
+def send_welcome(message):
+    chat_id = message.chat.id
+
+    bot.reply_to(
+        message,
+        f"Hi {chat_id}!",
+    )
