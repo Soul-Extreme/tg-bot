@@ -9,8 +9,11 @@ frameworkVersion: '3'
 # Cloud Provider
 provider:
   name    : aws
-  runtime : python3.10
+  runtime : python3.10              # AWS Lambda supports up to Python 3.10
   region  : ap-southeast-1          # Singapore
+
+  environment:
+    TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
 
 functions:
   tg-bot:
