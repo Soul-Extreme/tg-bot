@@ -23,7 +23,7 @@ telebot.logger.setLevel(logging.INFO)
 bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN, threaded=False)
 
 
-@bot.message_handlers(commands=['start'])
+@bot.message_handler(commands=['start'])
 def start(message):
     """
     Handles the /start command

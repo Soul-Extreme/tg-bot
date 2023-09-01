@@ -10,28 +10,25 @@ provider:
 plugins:
   - serverless-python-requirements
 
+package:
+  individually: true
+
 functions:
   tg-bot:
     handler: src/tg-bot.handler
     timeout: 15 # seconds
-    memorySize: 1024 # mb
+    memorySize: 128 # mb
     events:
       - http:
           path: /tg-bot
           method: post
           metrics: true
-    environment:
-      TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
-
     package:
       patterns:
-        - src/tg-bot.py
         - '!node_modules/**'
         - '!package.json'
         - '!package-lock.json'
-        - 'requirements.txt'
-        - 'serverless.yml'
         - '!README.md'
-        - '!.serverless/**'
         - '!venv/**'
-        - '!.gitignore'
+    environment:
+      TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
