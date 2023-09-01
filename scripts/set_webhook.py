@@ -20,9 +20,9 @@ try:
         "url": apigw_endpoint
     })
 
-    print(f'''Status Code: {response.status_code} \n
+    print(f"""Status Code: {response.status_code} \n
         {response.json}
-    ''')
+    """)
 
 except Exception as error:
     print(error)

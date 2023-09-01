@@ -15,4 +15,4 @@ package:
   individually: true
 
 functions:
-  tg-bot: ${file(./src/tg-bot/serverless.yml):TG-BOT}
+  tg-bot: ${file(./src/tg_bot/serverless.yml):TG-BOT}

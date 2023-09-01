@@ -1,5 +1,5 @@
 TG-BOT:
-    handler: src/tg-bot.handler
+    handler: tg_bot.handler
     description:
     timeout: 15 # seconds
     memorySize: 128 # mb
@@ -7,7 +7,6 @@ TG-BOT:
       - http:
           path: /tg-bot
           method: post
-          metrics: true
     package:
       patterns:
         - '!node_modules/**'
