@@ -6,8 +6,7 @@ Date        : 2023-09-01
 Description : Defines the list of commands used by the bot and a map for strings to the functions
 """
 
-import start
-
+from start import start_command
 
 # ======================================================================================================================
 
@@ -16,5 +15,5 @@ command_list = [
 ]
 
 command_dict = {
-    'start': start.start_command
+    'start': start_command
 }

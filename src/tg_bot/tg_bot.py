@@ -10,7 +10,7 @@ import logging
 import os
 import json
 
-from commands.command_list import command_list, command_dict
+from .commands.command_list import command_list, command_dict
 
 import telebot
 
@@ -27,7 +27,7 @@ telebot.logger.setLevel(logging.INFO)
 se_telegram_bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN, threaded=False)
 
 
-def handler(event, context):
+def lambda_handler(event, context):
     print(event)
 
     try:
