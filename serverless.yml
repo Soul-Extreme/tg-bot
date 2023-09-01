@@ -12,23 +12,13 @@ plugins:
   - serverless-python-requirements
 
 package:
-  individually: true
+  individually: false
+  patterns:
+    - 'src/**'
+    - '!node_modules/**'
+    - '!package.json'
+    - '!package-lock.json'
+    - '!README.md'
+    - '!venv/**'
 
-functions:
-  tg-bot:
-    handler: src/tg_bot/tg_bot.lambda_handler
-    timeout: 15 # seconds
-    memorySize: 128 # mb
-    events:
-      - http:
-          path: /tg-bot
-          method: post
-    package:
-      patterns:
-        - '!node_modules/**'
-        - '!package.json'
-        - '!package-lock.json'
-        - '!README.md'
-        - '!venv/**'
-    environment:
-      TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
+functions: ${file(./src/tg_bot/serverless.yml):TG-BOT}

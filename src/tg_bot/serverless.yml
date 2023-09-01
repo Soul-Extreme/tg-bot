@@ -1,0 +1,10 @@
+TG-BOT:
+  handler: src/tg_bot/tg_bot.lambda_handler
+  timeout: 15 # seconds
+  memorySize: 128 # mb
+  events:
+    - http:
+        path: src/tg_bot
+        method: post
+  environment:
+    TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
