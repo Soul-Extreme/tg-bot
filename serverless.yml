@@ -13,12 +13,6 @@ plugins:
 
 package:
   individually: true
-  patterns:
-    - '!node_modules/**'
-    - '!package.json'
-    - '!package-lock.json'
-    - '!README.md'
-    - '!venv/**'
 
 functions:
-  tg_bot: ${file(./src/tg_bot/serverless.yml):TG-BOT}
+  tg_bot: ${file(./src/serverless.yml):TG-BOT}

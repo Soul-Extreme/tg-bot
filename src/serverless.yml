@@ -1,0 +1,19 @@
+TG-BOT:
+  handler: src/tg_bot.handler
+  timeout: 15 # seconds
+  memorySize: 128 # mb
+  events:
+    - http:
+        path: src/tg_bot
+        method: post
+  package:
+    patterns:
+      - '!node_modules/**'
+      - '!package.json'
+      - '!package-lock.json'
+      - '!README.md'
+      - '!venv/**'
+      - '!assets'
+      - '!scripts'
+  environment:
+    TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
