@@ -10,7 +10,7 @@ import logging
 import os
 import json
 
-import commands.command_list
+from commands.command_list import command_list, command_dict
 
 import telebot
 
@@ -50,11 +50,12 @@ def handler(event, context):
 # HELPERS
 # ======================================================================================================================
 
-@se_telegram_bot.message_handler(commands=commands.command_list.command_list)
+@se_telegram_bot.message_handler(commands=command_list)
 def dispatcher(message):
     """
     Dispatches messages to the appropriate handler methods
     """
 
     # Remove '/' prefix from incoming message
-    commands.command_list.command_dict[message.text.removeprefix('/')](se_telegram_bot, message)
+    command = message.text.removeprefix('/')
+    command_dict[command](se_telegram_bot, message)

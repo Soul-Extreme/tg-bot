@@ -1,5 +1,5 @@
 TG-BOT:
-    handler: ./src/tg_bot/tg_bot.handler
+    handler: src/tg_bot/tg_bot.handler
     description:
     timeout: 15 # seconds
     memorySize: 128 # mb
