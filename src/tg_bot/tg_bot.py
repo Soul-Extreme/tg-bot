@@ -10,7 +10,7 @@ import logging
 import os
 import json
 
-from .commands.command_list import command_list, command_dict
+from commands.command_list import command_list, command_dict
 
 import telebot
 
