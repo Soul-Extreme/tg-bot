@@ -39,26 +39,22 @@ jobs:
   checkScriptChanges:
     needs: deploy
     runs-on: ubuntu-latest
+    outputs:
+      set_webhook_changed: ${{ steps.changes.outputs.set_webhook }}
     steps:
       - uses: actions/checkout@v3
 
-      - shell: pwsh
-        id: check_set_webhook_script_changed
-        run: |
-          # Diff HEAD with the previous commit
-          $diff = git diff --name-only HEAD^ HEAD
-          
-          # Check if set_webhook.py has changed
-          $SourceDiff = $diff | Where-Object { $_ -match '^src/set_webhook.py' }
-          $HasDiff = $SourceDiff.Length -gt 0
-          
-          # Set output
-          Write-Host "::set-output name=set_webhook_changed::$HasDiff"
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            set_webhook:
+              - 'src/set_webhook'
 
   setWebhook:
     needs: checkScriptChanges
     runs-on: ubuntu-latest
-    if: needs.checkScriptChanges.outputs.set_webhook_changed == 'True'
+    if: needs.checkScriptChanges.outputs.set_webhook_changed == 'true'
     strategy:
       matrix:
         python-version: [ "3.10" ]

@@ -8,9 +8,18 @@ Description : Entry point for the Telegram Bot.
 
 import json
 
+
 # ======================================================================================================================
 
 def handler(event, context):
-    return {
-        "statusCode": 200,
-    }
+    print(event)
+
+    try:
+        body = json.loads(event['body'])
+        print(body)
+
+        return {"statusCode": 200}
+    except Exception as error:
+        print(error)
+
+        return {"statusCode": 200}
