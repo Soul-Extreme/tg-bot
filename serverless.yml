@@ -1,6 +1,3 @@
-org: soulextreme
-app: se-tg-bot
-
 service: se-tg-bot
 
 frameworkVersion: '3'
@@ -16,13 +13,13 @@ plugins:
 functions:
   tg-bot:
     handler: src/tg-bot.handler
-    timeout: 30 # seconds
-    memorySize: 128 # mb
+    timeout: 15 # seconds
+    memorySize: 1024 # mb
     events:
       - http:
           path: /tg-bot
           method: post
-          cors: true
+          metrics: true
     environment:
       TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
 
