@@ -6,15 +6,5 @@ TG-BOT:
     - http:
         path: src/tg_bot
         method: post
-  package:
-    patterns:
-      - 'src/**'
-      - '!node_modules/**'
-      - '!package.json'
-      - '!package-lock.json'
-      - '!README.md'
-      - '!venv/**'
-      - '!assets'
-      - '!scripts'
   environment:
     TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
