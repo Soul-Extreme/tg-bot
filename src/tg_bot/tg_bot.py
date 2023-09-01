@@ -27,7 +27,7 @@ telebot.logger.setLevel(logging.INFO)
 se_telegram_bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN, threaded=False)
 
 
-def lambda_handler(event, context):
+def handler(event, context):
     print(event)
 
     try:

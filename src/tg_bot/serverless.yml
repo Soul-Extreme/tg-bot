@@ -1,5 +1,5 @@
 TG-BOT:
-  handler: tg_bot.lambda_handler
+  handler: ./src/tg_bot/tg_bot.handler
   timeout: 15 # seconds
   memorySize: 128 # mb
   events:

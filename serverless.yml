@@ -12,9 +12,8 @@ plugins:
   - serverless-python-requirements
 
 package:
-  individually: false
+  individually: true
   patterns:
-    - 'src/**'
     - '!node_modules/**'
     - '!package.json'
     - '!package-lock.json'
