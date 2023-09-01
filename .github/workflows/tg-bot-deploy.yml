@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - main
-    paths: [
-      'scripts/**',
-      'src/**',
-      'requirements.txt',
-      'serverless.yml'
-    ]
+    paths:
+      - 'scripts/**',
+      - 'src/**',
+      - 'requirements.txt',
+      - 'serverless.yml'
 
 jobs:
   deploy:
