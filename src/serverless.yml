@@ -8,6 +8,7 @@ TG-BOT:
         method: post
   package:
     patterns:
+      - src/**
       - '!node_modules/**'
       - '!package.json'
       - '!package-lock.json'
