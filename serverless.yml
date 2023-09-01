@@ -20,8 +20,9 @@ package:
     - '!package-lock.json'
     - '!README.md'
     - '!venv/**'
-    - '!assets'
-    - '!scripts'
+    - '!assets/**'
+    - '!scripts/**'
+    - '!terraform/**'
 
 functions:
   tg_bot: ${file(./src/tg_bot/serverless.yml):TG-BOT}

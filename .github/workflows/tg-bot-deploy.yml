@@ -72,6 +72,6 @@ jobs:
       - name: Set Webhook
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TG_BOT_ENDPOINT: ${{ secrets.TG_BOT_ENDPOINT }}
+          TG_BOT_APIGW_ENDPOINT: ${{ secrets.TG_BOT_APIGW_ENDPOINT }}
         run: |
           python scripts/set_webhook.py
