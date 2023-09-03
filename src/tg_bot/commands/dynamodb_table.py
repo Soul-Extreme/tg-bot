@@ -65,10 +65,10 @@ class DynamoDBTable:
                 self.keys.partition_key: partition_key_value
             }
 
-            if sort_key_value:
+            if not sort_key_value:
                 key[self.keys.sort_key] = sort_key_value
 
-            response = self.table.get_item(key)
+            response = self.table.get_item(Key=key)
             return response["Item"]
 
         except KeyError as error:
