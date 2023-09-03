@@ -1,4 +1,4 @@
-variable "terraform-locks" {
+variable "terraform_state_bucket_name" {
   type        = string
   description = "The name of the S3 bucket that contains the terraform state."
   default     = "se-tg-bot-terraform-state"

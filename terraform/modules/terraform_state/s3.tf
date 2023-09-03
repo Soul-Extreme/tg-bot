@@ -1,11 +1,11 @@
 resource "aws_s3_bucket" "terraform_state_bucket" {
-  bucket = var.terraform_state_lock_table_name
+  bucket        = var.terraform_state_bucket_name
   force_destroy = true
 }
 
 resource "aws_s3_bucket_acl" "terraform_state_acl" {
-  bucket = aws_s3_bucket.terraform_state_bucket.id
-  acl = "private"
+  bucket  = aws_s3_bucket.terraform_state_bucket.id
+  acl     = "private"
 }
 
 resource "aws_s3_bucket_versioning" "terraform_state_versioning"{
