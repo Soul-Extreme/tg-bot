@@ -18,7 +18,7 @@ from src.resources.table_names import Tables, TABLE_KEYS
 # ======================================================================================================================
 
 
-def command(bot: telebot.TeleBot, message):
+def command_start(bot: telebot.TeleBot, message):
     """
     Runs through the /start command flow:
 
@@ -81,7 +81,7 @@ def gen_registration_keyboard_markup(chat_id):
     return markup
 
 
-def handle_callback_query(bot: telebot.TeleBot, call):
+def callback_query_start(bot: telebot.TeleBot, call):
     """
     POST chat_id to google form. The chat_id field on the form is hidden from the user.
     """

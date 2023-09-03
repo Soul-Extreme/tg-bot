@@ -7,12 +7,12 @@ Description : A collection of helper variables and functions to clean up the int
 the rest of the project.
 """
 
-import start
+from .start import command_start, callback_query_start
 
 # ======================================================================================================================
 
 COMMAND_LIST = ["start"]
 
-COMMAND_DICT = {"start": start.command}
+COMMAND_DICT = {"start": command_start}
 
-CALLBACK_QUERY_DICT = {"start": start.handle_callback_query}
+CALLBACK_QUERY_DICT = {"start": callback_query_start}
