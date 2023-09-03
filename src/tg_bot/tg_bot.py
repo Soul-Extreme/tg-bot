@@ -12,7 +12,7 @@ import json
 
 import telebot
 
-from .commands.collections import COMMAND_LIST, COMMAND_DICT
+from .commands.collections import COMMAND_LIST, COMMAND_DICT, CALLBACK_QUERY_DICT
 
 # ======================================================================================================================
 
@@ -33,7 +33,7 @@ def handler(event, context):
         return {"statusCode": 200}
 
     except Exception as error:
-        logger.error(error)
+        print(error)
         return {"statusCode": 200}
 
 
@@ -43,12 +43,19 @@ def handler(event, context):
 
 
 @se_telegram_bot.message_handler(commands=COMMAND_LIST)
-def dispatcher(message):
+def command_dispatch(message):
     """
     Dispatches commands message to their respective handlers
-
-    :param message: The incoming message from the telegram server
     """
 
     command = message.text.removeprefix("/")
     COMMAND_DICT[command](se_telegram_bot, message)
+
+
+@se_telegram_bot.callback_query_handler(func=lambda call: True)
+def callback_dispatch(call):
+    """
+    Dispatches callback queries from inline keyboard buttons to their respective handlers
+    """
+
+    CALLBACK_QUERY_DICT[call.data["command"]](se_telegram_bot, call)
