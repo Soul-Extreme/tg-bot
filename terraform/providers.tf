@@ -8,13 +8,13 @@ terraform {
     }
   }
 
-  backend "s3" {
-    bucket          = "se-tg-bot-terraform-state"
-    region          = "ap-southeast-1"
-    key             = "state/terraform.tfstate"  # Path to where the terraform state file will be stored in the S3
-    encrypt         = true
-    dynamodb_table  = "terraform-locks"
-  }
+#  backend "s3" {
+#    bucket          = "se-tg-bot-terraform-state"
+#    region          = "ap-southeast-1"
+#    key             = "state/terraform.tfstate"  # Path to where the terraform state file will be stored in the S3
+#    encrypt         = true
+#    dynamodb_table  = "terraform-locks"
+#  }
 }
 
 provider "aws" {
