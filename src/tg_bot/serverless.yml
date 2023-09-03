@@ -1,7 +1,17 @@
 TG-BOT:
   handler: src/tg_bot/tg_bot.handler
   timeout: 15 # seconds
-  memorySize: 128 # mb
+  memorySize: 256 # mb
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:Query
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/personal-particulars"
   events:
     - http:
         path: src/tg_bot
