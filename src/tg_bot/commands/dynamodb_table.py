@@ -5,6 +5,7 @@ Date        : 2023-09-03
 
 Description : Defines a generic dynamoDB Table object
 """
+
 import string
 
 import boto3
@@ -30,9 +31,9 @@ class DynamoDBTable:
         """
 
         self.table_name = table_name
-        self.table = self.__dynamodb.Table(self.table_name)
+        self.__table = self.__dynamodb.Table(self.table_name)
 
-        self.keys = keys
+        self.__keys = keys
 
     def put_item(self, item):
         """
@@ -42,7 +43,7 @@ class DynamoDBTable:
         :return: True if the item was put in. False if it failed to put.
         """
         try:
-            self.table.put_item(Item=item)
+            self.__table.put_item(Item=item)
         except ClientError as error:
             print(f"Error putting item into {self.table_name}: {error}")
             return False
@@ -61,20 +62,28 @@ class DynamoDBTable:
         :return: The retrieved item as a dict. An empty dict is return if nothing was found.
         """
         try:
-            key = {
-                self.keys.partition_key: partition_key_value
-            }
+            response = None
 
-            if not sort_key_value:
-                key[self.keys.sort_key] = sort_key_value
+            if self.__keys.sort_key is None:
+                response = self.__table.get_item(
+                    Key={
+                        self.__keys.partition_key: partition_key_value
+                    }
+                )
+            else:
+                response = self.__table.get_item(
+                    Key={
+                        self.__keys.partition_key: partition_key_value,
+                        self.__keys.sort_key: sort_key_value
+                    }
+                )
 
-            response = self.table.get_item(Key=key)
             return response["Item"]
 
         except KeyError as error:
-            alert = f"Item with {self.keys.partition_key}:{partition_key_value}"
+            alert = f"Item with '{self.__keys.partition_key}': {partition_key_value}"
             if sort_key_value:
-                alert += f", {self.keys.sort_key}:{sort_key_value} "
+                alert += f", {self.__keys.sort_key}: {sort_key_value} "
 
-            print(f"{alert} could not be found: {error}")
+            print(f"{alert} could not be found")
             return {}

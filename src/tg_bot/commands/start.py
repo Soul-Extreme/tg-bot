@@ -6,8 +6,6 @@ Date        : 2023-09-01
 Description : Executes the /start command for the SE Telegram Bot
 """
 
-import json
-
 import telebot
 
 from .dynamodb_table import DynamoDBTable
@@ -27,8 +25,6 @@ def start_command(bot: telebot.TeleBot, message):
     :param bot: The telegram bot handling this message
     :param message: The message received from the telegram server
     """
-
-    print("Calling the start command")
 
     personal_particulars_table = DynamoDBTable(
         Tables.PERSONAL_PARTICULARS.value,
