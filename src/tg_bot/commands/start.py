@@ -17,7 +17,7 @@ from src.resources.table_names import Tables, TABLE_KEYS
 # ======================================================================================================================
 
 @SE_TELEGRAM_BOT.message_handler(commands=['start'])
-def command_start(bot: telebot.TeleBot, message):
+def command_start(message):
     """
     Runs through the /start command flow:
 
@@ -25,7 +25,6 @@ def command_start(bot: telebot.TeleBot, message):
     2a. If user doesn't exist; Prompt Registration through inline keyboard
     2b. If user exists; greet
 
-    :param bot: The telegram bot handling this message
     :param message: The message received from the telegram server
     """
 
@@ -44,13 +43,13 @@ def command_start(bot: telebot.TeleBot, message):
             You are currently not registered as a member. Please click on the button to register for Soul Extreme.
         """
 
-        bot.send_message(
+        SE_TELEGRAM_BOT.send_message(
             user_id,
             text=registration_prompt_message,
             reply_markup=gen_registration_keyboard_markup(user_id)
         )
     else:
-        bot.send_message(user_id, f"Welcome back {user_id}!")
+        SE_TELEGRAM_BOT.send_message(user_id, f"Welcome back {user_id}!")
 
 
 # ======================================================================================================================
