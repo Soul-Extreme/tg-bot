@@ -57,7 +57,7 @@ jobs:
         run: terraform plan -input=false
 
       # Exit if terraform plan fails
-      - name: Terraform Plan Status
+      - name: Terraform Plan Exit Conditional
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
