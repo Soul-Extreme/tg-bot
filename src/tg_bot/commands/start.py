@@ -8,8 +8,8 @@ Description : Executes the /start command for the SE Telegram Bot
 
 import telebot
 
-from .dynamodb_table import DynamoDBTable
-from .table_names import Tables, TABLE_KEYS
+from src.resources.dynamodb_table import DynamoDBTable
+from src.resources.table_names import Tables, TABLE_KEYS
 
 
 # ======================================================================================================================
