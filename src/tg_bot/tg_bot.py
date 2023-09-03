@@ -10,21 +10,18 @@ import logging
 import os
 import json
 
-from .commands.command_list import command_list, command_dict
-
 import telebot
 
-# ======================================================================================================================
+from .commands.command_list import command_list, command_dict
 
-# Constants
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+# ======================================================================================================================
 
 # Set up any necessary logging
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
 # Create telegram bot
-se_telegram_bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN, threaded=False)
+se_telegram_bot = telebot.TeleBot(os.getenv("TELEGRAM_BOT_TOKEN"), threaded=False)
 
 
 def handler(event, context):
@@ -32,7 +29,8 @@ def handler(event, context):
 
     try:
         # de-jsons the request body
-        update = telebot.types.Update.de_json(json.loads(event['body']))
+        event_body_as_dict = json.loads(event["body"])
+        update = telebot.types.Update.de_json(event_body_as_dict)
         se_telegram_bot.process_new_updates([update])
 
         return {
@@ -59,3 +57,5 @@ def dispatcher(message):
     # Remove '/' prefix from incoming message
     command = message.text.removeprefix('/')
     command_dict[command](se_telegram_bot, message)
+
+# TODO: Handle non-command messages
