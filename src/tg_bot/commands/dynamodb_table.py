@@ -30,7 +30,7 @@ class DynamoDBTable:
         """
 
         self.table_name = table_name
-        self.table = self.__dynamodb.table(self.table_name)
+        self.table = self.__dynamodb.Table(self.table_name)
 
         self.keys = keys
 
