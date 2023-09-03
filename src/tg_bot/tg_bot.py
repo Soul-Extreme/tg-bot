@@ -7,21 +7,16 @@ Description : Entry point for the Telegram Bot.
 """
 
 import logging
-import os
 import json
 
 import telebot
 
-from .commands.command_list import command_list, command_dict
+from src.resources.telegram_bot_instance import SE_TELEGRAM_BOT
 
 # ======================================================================================================================
 
-# Set up any necessary logging
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
-
-# Create telegram bot
-se_telegram_bot = telebot.TeleBot(os.getenv('TELEGRAM_BOT_TOKEN'), threaded=False)
 
 
 def handler(event, context):
@@ -30,7 +25,7 @@ def handler(event, context):
     try:
         # de-jsons the request body
         update = telebot.types.Update.de_json(json.loads(event['body']))
-        se_telegram_bot.process_new_updates([update])
+        SE_TELEGRAM_BOT.process_new_updates([update])
 
         return {
             "statusCode": 200
@@ -41,18 +36,3 @@ def handler(event, context):
         return {
             "statusCode": 200
         }
-
-
-# ======================================================================================================================
-# HELPERS
-# ======================================================================================================================
-
-@se_telegram_bot.message_handler(commands=command_list)
-def dispatcher(message):
-    """
-    Dispatches messages to the appropriate handler methods
-    """
-
-    # Remove '/' prefix from incoming message
-    command = message.text.removeprefix('/')
-    command_dict[command](se_telegram_bot, message)
