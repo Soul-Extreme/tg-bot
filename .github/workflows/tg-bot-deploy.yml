@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - '.github/workflows/tg-bot-deploy.yml'
       - 'scripts/**'
       - 'src/**'
       - 'requirements.txt'
