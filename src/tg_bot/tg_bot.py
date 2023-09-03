@@ -7,16 +7,17 @@ Description : Entry point for the Telegram Bot.
 """
 
 import logging
+import os
 import json
 
 import telebot
-
-from src.resources.telegram_bot_instance import SE_TELEGRAM_BOT
 
 # ======================================================================================================================
 
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
+
+SE_TELEGRAM_BOT = telebot.TeleBot(os.getenv('TELEGRAM_BOT_TOKEN'), threaded=False)
 
 
 def handler(event, context):
