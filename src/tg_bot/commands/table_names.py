@@ -8,7 +8,7 @@ Description : Defines a set of variables with the table names and associated key
 
 from enum import Enum
 
-from .dynamodb_keyset import KeySet
+from .dynamodb_keyset import DynamoDBKeySet
 
 
 # ======================================================================================================================
@@ -26,5 +26,5 @@ class Tables(Enum):
 # ----------------------------------------
 
 TABLE_KEYS = {
-    Tables.PERSONAL_PARTICULARS.value: KeySet("chat_id")
+    Tables.PERSONAL_PARTICULARS: DynamoDBKeySet("chat_id")
 }

@@ -5,9 +5,12 @@ Date        : 2023-09-03
 
 Description : Defines a generic dynamoDB Table object
 """
+import string
 
 import boto3
 from botocore.exceptions import ClientError
+
+from .dynamodb_keyset import DynamoDBKeySet
 
 
 # ======================================================================================================================
@@ -16,8 +19,9 @@ class DynamoDBTable:
     """
     Encapsulates an AWS DynamoDB Table
     """
+    __dynamodb = boto3.resource("dynamodb")
 
-    def __init__(self, table_name, keys):
+    def __init__(self, table_name: string, keys: DynamoDBKeySet):
         """
         Constructor for a DynamoDB Table
 
@@ -26,8 +30,7 @@ class DynamoDBTable:
         """
 
         self.table_name = table_name
-        self.dynamodb = boto3.resource("dynamodb")
-        self.table = self.dynamodb.table(self.table_name)
+        self.table = self.__dynamodb.table(self.table_name)
 
         self.keys = keys
 
@@ -46,7 +49,7 @@ class DynamoDBTable:
 
         return True
 
-    def get_item(self, partition_key_value, sort_key_value=None):
+    def get_item(self, partition_key_value: string, sort_key_value: string = None):
         """
         Retrieves an item from the table.
 
@@ -62,12 +65,16 @@ class DynamoDBTable:
                 self.keys.partition_key: partition_key_value
             }
 
-            if sort_key_value is not None:
+            if sort_key_value:
                 key[self.keys.sort_key] = sort_key_value
 
             response = self.table.get_item(key)
             return response["Item"]
 
         except KeyError as error:
-            print("Item could not be found!")
+            alert = f"Item with {self.keys.partition_key}:{partition_key_value}"
+            if sort_key_value:
+                alert += f", {self.keys.sort_key}:{sort_key_value} "
+
+            print(f"{alert} could not be found: {error}")
             return {}

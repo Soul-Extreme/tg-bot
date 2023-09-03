@@ -28,8 +28,12 @@ def start_command(bot: telebot.TeleBot, message):
     :param message: The message received from the telegram server
     """
 
-    personal_particulars_keyset = TABLE_KEYS[Tables.PERSONAL_PARTICULARS.value]
-    personal_particulars_table = DynamoDBTable(Tables.PERSONAL_PARTICULARS.value, personal_particulars_keyset)
+    print("Calling the start command")
+
+    personal_particulars_table = DynamoDBTable(
+        Tables.PERSONAL_PARTICULARS.value,
+        TABLE_KEYS[Tables.PERSONAL_PARTICULARS]
+    )
 
     user_id = message.chat.id
     user_item = personal_particulars_table.get_item(user_id)
@@ -38,9 +42,6 @@ def start_command(bot: telebot.TeleBot, message):
         # If user cannot be found, we prompt registration
         bot.send_message(user_id, f"{user_id} needs to register!")
     else:
-        user_item_as_dict = json.loads(user_item)
-
-        # name = user_item_as_dict["preferred_name"] if not user_item_as_dict["preferred_name"] else user_item_as_dict["full_name"]
         bot.send_message(user_id, f"Welcome back {user_id}!")
 
 
