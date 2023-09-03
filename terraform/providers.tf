@@ -9,11 +9,11 @@ terraform {
   }
 
   backend "s3" {
-    bucket          = module.terraform_state_resources.se_te_bot_terraform_state_s3_bucket_name
-    region          = var.aws_region
-    key             = "./state/terraform.tfstate"  # Path to where the terraform state file will be stored in the S3
+    bucket          = "se-tg-bot-terraform-state"
+    region          = "ap-southeast-1"
+    key             = "state/terraform.tfstate"  # Path to where the terraform state file will be stored in the S3
     encrypt         = true
-    dynamodb_table  = module.terraform_state_resources.se_tg_bot_terraform_locks_table
+    dynamodb_table  = "terraform-locks"
   }
 }
 
