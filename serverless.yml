@@ -28,3 +28,4 @@ package:
 
 functions:
   tg_bot: ${file(./src/tg_bot/serverless.yml):TG-BOT}
+  registration: ${file(./src/registration/serverless.yml):REGISTRATION}
