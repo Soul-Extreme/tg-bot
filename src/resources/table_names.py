@@ -17,8 +17,10 @@ from .dynamodb_keyset import DynamoDBKeySet
 # Table Names
 # ----------------------------------------
 
+
 class Tables(Enum):
-    PERSONAL_PARTICULARS = "personal-particulars"
+    PERSONAL_PARTICULARS = ("personal-particulars",)
+    MEMBER_PROFILE = "member-profile"
 
 
 # ----------------------------------------
@@ -26,5 +28,6 @@ class Tables(Enum):
 # ----------------------------------------
 
 TABLE_KEYS = {
-    Tables.PERSONAL_PARTICULARS: DynamoDBKeySet("chat_id")
+    Tables.PERSONAL_PARTICULARS: DynamoDBKeySet("chat_id"),
+    Tables.MEMBER_PROFILE: DynamoDBKeySet("chat_id"),
 }

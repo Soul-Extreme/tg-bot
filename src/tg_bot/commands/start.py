@@ -51,7 +51,6 @@ def command_start(bot: telebot.TeleBot, message):
             photo="https://i.imgur.com/xNSx2QD.png",
             caption=registration_prompt_message,
             parse_mode="HTML",
-            protect_content=True,
             reply_markup=gen_registration_keyboard_markup(),
         )
 
