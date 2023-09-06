@@ -26,7 +26,6 @@ def handler(event, context):
     print(event)
 
     try:
-        # de-jsons the request body
         update = telebot.types.Update.de_json(json.loads(event["body"]))
         se_telegram_bot.process_new_updates([update])
 
@@ -58,4 +57,4 @@ def callback_dispatch(call):
     Dispatches callback queries from inline keyboard buttons to their respective handlers
     """
 
-    CALLBACK_QUERY_DICT[call.data["command"]](se_telegram_bot, call)
+    # CALLBACK_QUERY_DICT[call.data["command"]](se_telegram_bot, call)

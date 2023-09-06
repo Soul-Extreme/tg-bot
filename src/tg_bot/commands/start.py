@@ -39,8 +39,12 @@ def command_start(bot: telebot.TeleBot, message):
 
     if not user:
         # If user cannot be found, we prompt registration
-        registration_prompt_message = f""" Welcome to the Soul Extreme Telegram Bot!\n\nYou are currently *not 
-        registered* as a member. Please click on the button to register for Soul Extreme."""
+        registration_prompt_message = (
+            f"Welcome to the Soul Extreme Telegram Bot!\nYour <b>user ID</b> is\n<code>{chat_id}</code>\nCopy and "
+            f"paste this into the user ID field on the registration form as shown in the attached image.\n\nPlease"
+            f"click on the button to register for Soul Extreme.\n\nYou should receive a confirmation message once "
+            f"you've registered. If you do not, please contact a committee member."
+        )
 
         bot.send_message(
             chat_id,
@@ -64,34 +68,11 @@ def gen_registration_keyboard_markup(chat_id):
     :param chat_id: The chat_id that will be POSTed to the Google form for registration
     :return: The markup for the inline keyboard
     """
+
+    # The values in each button for an inline keyboard will only execute the first kwarg. Multiple are not supported!
     markup = telebot.util.quick_markup(
-        {
-            "Register": {
-                "url": "https://forms.gle/LwbPKfyENvbnCkN28",
-                "callback_data": {
-                    "command": os.path.basename(__file__).removesuffix(".py"),
-                    "chat_id": chat_id,
-                    "step": "registration",
-                },
-            }
-        },
+        {"Register": {"url": "https://forms.gle/LwbPKfyENvbnCkN28"}},
         row_width=1,
     )
 
     return markup
-
-
-def callback_query_start(bot: telebot.TeleBot, call):
-    """
-    POST chat_id to google form. The chat_id field on the form is hidden from the user.
-    """
-    form_url = "https://forms.gle/LwbPKfyENvbnCkN28"
-    chat_id = call.data["chat_id"]
-
-    # response = requests.post(form_url, json={
-    #     "chat_id": chat_id
-    # })
-    #
-    # if response.status_code != 200:
-    #     print("Error sending data to Google Form")
-    bot.send_message(chat_id, "Need to POST")
