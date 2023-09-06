@@ -48,7 +48,7 @@ def command_start(bot: telebot.TeleBot, message):
 
         bot.send_photo(
             chat_id=chat_id,
-            photo="https://drive.google.com/file/d/1wZvpPXsLhuf6zVlRSNif1ayTm-5j5HBH/view?usp=share_link",
+            photo="https://i.imgur.com/xNSx2QD.png",
             caption=registration_prompt_message,
             parse_mode="HTML",
             protect_content=True,
