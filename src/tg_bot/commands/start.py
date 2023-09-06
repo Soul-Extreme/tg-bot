@@ -54,12 +54,6 @@ def command_start(bot: telebot.TeleBot, message):
             reply_markup=gen_registration_keyboard_markup(),
         )
 
-        # bot.send_message(
-        #     chat_id,
-        #     parse_mode="HTML",
-        #     text=registration_prompt_message,
-        #     reply_markup=gen_registration_keyboard_markup(chat_id),
-        # )
     else:
         name = user["preferred_name"] if user["preferred_name"] else user["full_name"]
         bot.send_message(chat_id, f"Welcome back {name}! How may I assist you?")

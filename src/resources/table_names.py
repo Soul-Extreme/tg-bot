@@ -19,7 +19,7 @@ from .dynamodb_keyset import DynamoDBKeySet
 
 
 class Tables(Enum):
-    PERSONAL_PARTICULARS = ("personal-particulars",)
+    PERSONAL_PARTICULARS = "personal-particulars"
     MEMBER_PROFILE = "member-profile"
 
 
