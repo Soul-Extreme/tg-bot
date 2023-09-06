@@ -12,7 +12,7 @@ import json
 
 import telebot
 
-from .commands.collections import COMMAND_LIST, COMMAND_DICT, CALLBACK_QUERY_DICT
+from .commands.collections import COMMAND_LIST, COMMAND_DICT
 
 # ======================================================================================================================
 
