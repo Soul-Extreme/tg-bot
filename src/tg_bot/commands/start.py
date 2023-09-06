@@ -40,18 +40,27 @@ def command_start(bot: telebot.TeleBot, message):
     if not user:
         # If user cannot be found, we prompt registration
         registration_prompt_message = (
-            f"Welcome to the Soul Extreme Telegram Bot!\n\nYour <b>user ID</b> is:\n<code>{12345678}</code>\nCopy and "
+            f"Welcome to the Soul Extreme Telegram Bot!\n\nYour <b>user ID</b> is:\n<code>{chat_id}</code>\nCopy and "
             f"paste this into the user ID field on the registration form as shown in the attached image.\n\nPlease "
             f"click on the button to register for Soul Extreme.\n\nYou should receive a confirmation message once "
             f"you've registered. If you do not, please contact a committee member."
         )
 
-        bot.send_message(
-            chat_id,
+        bot.send_photo(
+            chat_id=chat_id,
+            photo="../../../assets/user_id_field.png",
+            caption=registration_prompt_message,
             parse_mode="HTML",
-            text=registration_prompt_message,
-            reply_markup=gen_registration_keyboard_markup(chat_id),
+            protect_content=True,
+            reply_markup=gen_registration_keyboard_markup(),
         )
+
+        # bot.send_message(
+        #     chat_id,
+        #     parse_mode="HTML",
+        #     text=registration_prompt_message,
+        #     reply_markup=gen_registration_keyboard_markup(chat_id),
+        # )
     else:
         name = user["preferred_name"] if user["preferred_name"] else user["full_name"]
         bot.send_message(chat_id, f"Welcome back {name}! How may I assist you?")
@@ -62,7 +71,7 @@ def command_start(bot: telebot.TeleBot, message):
 # ======================================================================================================================
 
 
-def gen_registration_keyboard_markup(chat_id):
+def gen_registration_keyboard_markup():
     """
     Creates the inline keyboard to prompt Registration
 
