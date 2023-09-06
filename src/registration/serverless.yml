@@ -12,6 +12,7 @@ REGISTRATION:
         - dynamodb:DeleteItem
       Resource:
         - "arn:aws:dynamodb:${self:provider.region}:*:table/personal-particulars"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/member-profile"
   events:
     - http:
         path: src/registration

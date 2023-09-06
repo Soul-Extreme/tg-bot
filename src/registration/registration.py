@@ -13,4 +13,15 @@ import os
 
 
 def handler(event, context):
-    print(event)
+    try:
+        event_body = json.loads(event["body"])
+        print(event_body)
+
+    except Exception as error:
+        print(error)
+        return {"statusCode": 200}
+
+
+# ======================================================================================================================
+# HELPERS
+# ======================================================================================================================
