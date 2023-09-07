@@ -140,16 +140,15 @@ def create_profile(chat_id) -> bool:
     # Build a new member profile
     item = {
         MemberProfileFields.CHAT_ID.value: chat_id,
-        MemberProfileFields.STUDENT_STATUS.value: bool(),
         MemberProfileFields.GENRE.value: user[PersonalParticularsFields.GENRE.value],
         MemberProfileFields.CREDITS.value: 0,
         MemberProfileFields.ADMIN.value: False
     }
 
-    match user[PersonalParticularsFields.STUDENT_STATUS.value]:
-        case "True":
+    match user[PersonalParticularsFields.STUDENT_STATUS.value].lower():
+        case "true":
             item[MemberProfileFields.STUDENT_STATUS.value] = True
-        case "False":
+        case "false":
             item[MemberProfileFields.STUDENT_STATUS.value] = False
 
     try:
