@@ -65,14 +65,14 @@ class DynamoDBTable:
             if self.__keys.sort_key is None:
                 response = self.__table.get_item(
                     Key={
-                        self.__keys.partition_key.name: {self.__keys.partition_key.type, partition_key_value}
+                        self.__keys.partition_key.name: partition_key_value
                     }
                 )
             else:
                 response = self.__table.get_item(
                     Key={
-                        self.__keys.partition_key.name: {self.__keys.partition_key.type, partition_key_value},
-                        self.__keys.sort_key.name: {self.__keys.sort_key.type, sort_key_value}
+                        self.__keys.partition_key.name: partition_key_value,
+                        self.__keys.sort_key.name: sort_key_value
                     }
                 )
 
