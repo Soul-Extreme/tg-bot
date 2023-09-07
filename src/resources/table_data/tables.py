@@ -8,7 +8,9 @@ Description : Defines a set of variables with the table names and associated key
 
 from enum import Enum
 
-from src.resources.dynamodb_keyset                          import DynamoDBKeySet
+import boto3.dynamodb.types
+
+from src.resources.dynamodb_keys                          import DynamoDBKey, DynamoDBKeySet
 from src.resources.table_data.personal_particulars_table    import PersonalParticularsFields
 from src.resources.table_data.member_profile_table          import MemberProfileFields
 
@@ -22,6 +24,10 @@ class Tables(Enum):
 
 
 TABLE_KEYS = {
-    Tables.PERSONAL_PARTICULARS: DynamoDBKeySet(PersonalParticularsFields.CHAT_ID.value),
-    Tables.MEMBER_PROFILE: DynamoDBKeySet(MemberProfileFields.CHAT_ID.value),
+    Tables.PERSONAL_PARTICULARS: DynamoDBKeySet(
+        DynamoDBKey(PersonalParticularsFields.CHAT_ID.value, boto3.dynamodb.types.NUMBER)
+    ),
+    Tables.MEMBER_PROFILE: DynamoDBKeySet(
+        DynamoDBKey(MemberProfileFields.CHAT_ID.value, boto3.dynamodb.types.NUMBER)
+    ),
 }

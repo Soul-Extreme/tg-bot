@@ -100,6 +100,9 @@ def register_member(form_data) -> bool:
             item[db_field] = genre_value
 
     # Convert certain fields
+    chat_id = item[PersonalParticularsFields.CHAT_ID.value]
+    item[PersonalParticularsFields.CHAT_ID.value] = int(chat_id)
+
     match item[PersonalParticularsFields.STUDENT_STATUS.value]:
         case "Student":
             item[PersonalParticularsFields.STUDENT_STATUS.value] = True
@@ -121,7 +124,7 @@ def register_member(form_data) -> bool:
         return False
 
 
-def create_profile(chat_id) -> bool:
+def create_profile(chat_id: str) -> bool:
     personal_particulars_table = DynamoDBTable(
         Tables.PERSONAL_PARTICULARS.value,
         TABLE_KEYS[Tables.PERSONAL_PARTICULARS]

@@ -6,12 +6,10 @@ Date        : 2023-09-03
 Description : Defines a generic dynamoDB Table object
 """
 
-import string
-
 import boto3
 from botocore.exceptions import ClientError
 
-from .dynamodb_keyset import DynamoDBKeySet
+from .dynamodb_keys import DynamoDBKeySet
 
 
 # ======================================================================================================================
@@ -22,7 +20,7 @@ class DynamoDBTable:
     """
     __dynamodb = boto3.resource("dynamodb")
 
-    def __init__(self, table_name: string, keys: DynamoDBKeySet):
+    def __init__(self, table_name: str, keys: DynamoDBKeySet):
         """
         Constructor for a DynamoDB Table
 
@@ -50,7 +48,7 @@ class DynamoDBTable:
 
         return True
 
-    def get_item(self, partition_key_value: string, sort_key_value: string = None):
+    def get_item(self, partition_key_value: str, sort_key_value: str = None):
         """
         Retrieves an item from the table.
 
@@ -67,14 +65,14 @@ class DynamoDBTable:
             if self.__keys.sort_key is None:
                 response = self.__table.get_item(
                     Key={
-                        self.__keys.partition_key: partition_key_value
+                        self.__keys.partition_key.name: {self.__keys.partition_key.type, partition_key_value}
                     }
                 )
             else:
                 response = self.__table.get_item(
                     Key={
-                        self.__keys.partition_key: partition_key_value,
-                        self.__keys.sort_key: sort_key_value
+                        self.__keys.partition_key.name: {self.__keys.partition_key.type, partition_key_value},
+                        self.__keys.sort_key.name: {self.__keys.sort_key.type, sort_key_value}
                     }
                 )
 
