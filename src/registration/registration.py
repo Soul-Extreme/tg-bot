@@ -33,15 +33,16 @@ def handler(event, context):
         chat_id = int(event_body["User ID"])
 
         if registration_status is True:
-            print("Registration Success")
+            print(f"Registration Success for {chat_id}!")
             profile_created = create_profile(chat_id)
 
             if profile_created is True:
-                print("Profile Created!")
-                # se_telegram_bot.send_message(
-                #     chat_id=chat_id,
-                #     text=f"Thank you for registering for Soul Extreme! How may I assist you?",
-                # )
+                print(f"Profile Created for {chat_id}!")
+                se_telegram_bot.send_message(
+                    chat_id=chat_id,
+                    text=f"Thank you for registering for Soul Extreme! How may I assist you?",
+                    allow_sending_without_reply=True
+                )
 
         return {"statusCode": 200}
 
