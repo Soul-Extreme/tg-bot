@@ -74,9 +74,9 @@ def gen_registration_keyboard_markup():
     :return: The markup for the inline keyboard
     """
 
-    # The values in each button for an inline keyboard will only execute the first kwarg. Multiple are not supported!
+    # The values in each button for an inline keyboard will only execute the first kwarg. Multiple is not supported!
     markup = telebot.util.quick_markup(
-        {"Register": {"url": "https://forms.gle/LwbPKfyENvbnCkN28"}},
+        {"Register": {"url": "https://forms.gle/ndRGqt3yM8W5QLd26"}},
         row_width=1,
     )
 
