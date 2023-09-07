@@ -28,7 +28,6 @@ se_telegram_bot = telebot.TeleBot(os.getenv("TELEGRAM_BOT_TOKEN"), threaded=Fals
 def handler(event, context):
     try:
         event_body = json.loads(event["body"])
-        print(event_body)
 
         registration_status = register_member(event_body)
         chat_id = event_body["User ID"]
@@ -79,7 +78,7 @@ def register_member(form_data) -> bool:
         "Student Status": PersonalParticularsFields.STUDENT_STATUS,
         "Student ID": PersonalParticularsFields.STUDENT_ID,
         "Cluster": PersonalParticularsFields.CLUSTER,
-        "Programme": PersonalParticularsFields.PROGRAMME,
+        "Program": PersonalParticularsFields.PROGRAMME,
         "Year": PersonalParticularsFields.YEAR,
         "Graduation Year": PersonalParticularsFields.GRADUATION_YEAR,
         "Emergency Contact Name": PersonalParticularsFields.EMERGENCY_CONTACT_NAME,
@@ -90,33 +89,32 @@ def register_member(form_data) -> bool:
         "Jacket Size": PersonalParticularsFields.JACKET_SIZE,
     }
 
-    personal_particulars_item = {}
+    item = {}
     for field, value in form_data.items():
         db_field = var_map[field].value
-        personal_particulars_item[db_field] = value
+        item[db_field] = value
 
         # Special Handling for genre which needs to be mapped to an enum
         if db_field == PersonalParticularsFields.GENRE.value:
             genre_value = ", ".join(value)
-            personal_particulars_item[db_field] = genre_value
+            item[db_field] = genre_value
 
     # Convert certain fields
-    match personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS.value]:
+    match item[PersonalParticularsFields.STUDENT_STATUS.value]:
         case "Student":
-            personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS.value] = True
+            item[PersonalParticularsFields.STUDENT_STATUS.value] = True
+
+            year_string = item[PersonalParticularsFields.YEAR.value]
+            item[PersonalParticularsFields.YEAR.value] = int(year_string)
+
+            graduation_year_string = item[PersonalParticularsFields.GRADUATION_YEAR.value]
+            item[PersonalParticularsFields.GRADUATION_YEAR.value] = int(graduation_year_string)
+
         case "Alumni":
-            personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS.value] = False
-
-    year_string = personal_particulars_item[PersonalParticularsFields.YEAR.value]
-    personal_particulars_item[PersonalParticularsFields.YEAR.value] = int(year_string)
-
-    graduation_year_string = personal_particulars_item[PersonalParticularsFields.GRADUATION_YEAR.value]
-    personal_particulars_item[PersonalParticularsFields.GRADUATION_YEAR.value] = int(graduation_year_string)
-
-    print(personal_particulars_item)
+            item[PersonalParticularsFields.STUDENT_STATUS.value] = False
 
     try:
-        personal_particulars_table.put_item(personal_particulars_item)
+        personal_particulars_table.put_item(item)
         return True
     except Exception as error:
         print(error)
@@ -136,7 +134,7 @@ def create_profile(chat_id) -> bool:
     user = personal_particulars_table.get_item(chat_id)
 
     # Build a new member profile
-    member_profile_item = {
+    item = {
         MemberProfileFields.CHAT_ID.value: user[PersonalParticularsFields.CHAT_ID.value],
         MemberProfileFields.STUDENT_STATUS.value: user[PersonalParticularsFields.STUDENT_STATUS.value],
         MemberProfileFields.GENRE.value: user[PersonalParticularsFields.GENRE.value],
@@ -145,7 +143,7 @@ def create_profile(chat_id) -> bool:
     }
 
     try:
-        member_profile_table.put_item(member_profile_item)
+        member_profile_table.put_item(item)
         return True
     except Exception as error:
         print(error)
