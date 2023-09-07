@@ -43,7 +43,9 @@ class DynamoDBTable:
         :return: True if the item was put in. False if it failed to put.
         """
         try:
+            print("Inserting Item...")
             self.__table.put_item(Item=item)
+            print("Inserted Item!")
         except ClientError as error:
             print(f"Error putting item into {self.table_name}: {error}")
             return False

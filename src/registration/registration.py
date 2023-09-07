@@ -28,18 +28,21 @@ se_telegram_bot = telebot.TeleBot(os.getenv("TELEGRAM_BOT_TOKEN"), threaded=Fals
 def handler(event, context):
     try:
         event_body = json.loads(event["body"])
+        print(event_body)
 
         registration_status = register_member(event_body)
         chat_id = event_body["User ID"]
 
         if registration_status is True:
+            print("Registration Success")
             profile_created = create_profile(chat_id)
 
             if profile_created is True:
-                se_telegram_bot.send_message(
-                    chat_id=chat_id,
-                    text=f"Thank you for registering for Soul Extreme! How may I assist you?",
-                )
+                print("Profile Created!")
+                # se_telegram_bot.send_message(
+                #     chat_id=chat_id,
+                #     text=f"Thank you for registering for Soul Extreme! How may I assist you?",
+                # )
 
         return {"statusCode": 200}
 
@@ -109,6 +112,8 @@ def register_member(form_data) -> bool:
 
     graduation_year_string = personal_particulars_item[PersonalParticularsFields.GRADUATION_YEAR.value]
     personal_particulars_item[PersonalParticularsFields.GRADUATION_YEAR.value] = int(graduation_year_string)
+
+    print(personal_particulars_item)
 
     try:
         personal_particulars_table.put_item(personal_particulars_item)
