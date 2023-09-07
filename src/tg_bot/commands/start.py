@@ -36,8 +36,8 @@ def command_start(bot: telebot.TeleBot, message):
         registration_prompt_message = (
             f"Welcome to the Soul Extreme Telegram Bot!\n\nYour <b>user ID</b> is:\n<code>{chat_id}</code>\nCopy and "
             f"paste this into the user ID field on the registration form as shown in the attached image.\n\nPlease "
-            f"click on the button to register for Soul Extreme.\n\nYou should receive a confirmation message once "
-            f"you've registered. If you do not, please contact a committee member."
+            f"click on the <b>Register</b> button below to register for Soul Extreme.\n\nYou should receive a "
+            f"confirmation message once you've registered. If you do not, please contact a committee member."
         )
 
         bot.send_photo(
