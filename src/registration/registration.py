@@ -138,12 +138,18 @@ def create_profile(chat_id) -> bool:
 
     # Build a new member profile
     item = {
-        MemberProfileFields.CHAT_ID.value: user[PersonalParticularsFields.CHAT_ID.value],
-        MemberProfileFields.STUDENT_STATUS.value: user[PersonalParticularsFields.STUDENT_STATUS.value],
+        MemberProfileFields.CHAT_ID.value: chat_id,
+        MemberProfileFields.STUDENT_STATUS.value: bool(),
         MemberProfileFields.GENRE.value: user[PersonalParticularsFields.GENRE.value],
         MemberProfileFields.CREDITS.value: 0,
         MemberProfileFields.ADMIN.value: False
     }
+
+    match user[PersonalParticularsFields.STUDENT_STATUS.value]:
+        case "True":
+            item[MemberProfileFields.STUDENT_STATUS.value] = True
+        case "False":
+            item[MemberProfileFields.STUDENT_STATUS.value] = False
 
     try:
         member_profile_table.put_item(item)
