@@ -10,7 +10,8 @@ from enum import Enum
 
 import boto3.dynamodb.types
 
-from src.resources.dynamodb_keys                          import DynamoDBKey, DynamoDBKeySet
+from src.resources.dynamodb_keys                            import DynamoDBKey, DynamoDBKeySet
+from src.resources.dynamodb_table                           import DynamoDBTable
 from src.resources.table_data.personal_particulars_table    import PersonalParticularsFields
 from src.resources.table_data.member_profile_table          import MemberProfileFields
 
@@ -22,12 +23,28 @@ class Tables(Enum):
     PERSONAL_PARTICULARS    = "personal-particulars"
     MEMBER_PROFILE          = "member-profile"
 
+# -----------------------------------------------
+# Table Definitions
+# -----------------------------------------------
 
-TABLE_KEYS = {
-    Tables.PERSONAL_PARTICULARS: DynamoDBKeySet(
-        DynamoDBKey(PersonalParticularsFields.CHAT_ID.value, boto3.dynamodb.types.NUMBER)
-    ),
-    Tables.MEMBER_PROFILE: DynamoDBKeySet(
-        DynamoDBKey(MemberProfileFields.CHAT_ID.value, boto3.dynamodb.types.NUMBER)
-    ),
-}
+
+PERSONAL_PARTICULARS_TABLE = DynamoDBTable(
+    Tables.PERSONAL_PARTICULARS.value,
+    DynamoDBKeySet(
+        partition_key=DynamoDBKey(
+            PersonalParticularsFields.CHAT_ID.value,
+            boto3.dynamodb.types.NUMBER
+        )
+    )
+)
+
+MEMBER_PROFILE_TABLE = DynamoDBTable(
+    Tables.MEMBER_PROFILE.value,
+    DynamoDBKeySet(
+        partition_key=DynamoDBKey(
+            MemberProfileFields.CHAT_ID.value,
+            boto3.dynamodb.types.NUMBER
+        )
+    )
+)
+

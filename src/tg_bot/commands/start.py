@@ -9,7 +9,7 @@ Description : Executes the /start command for the SE Telegram Bot
 import telebot
 
 from src.resources.dynamodb_table                           import DynamoDBTable
-from src.resources.table_data.tables                        import Tables, TABLE_KEYS
+from src.resources.table_data.tables                        import PERSONAL_PARTICULARS_TABLE
 from src.resources.table_data.personal_particulars_table    import PersonalParticularsFields
 
 
@@ -28,12 +28,8 @@ def command_start(bot: telebot.TeleBot, message):
     :param message: The message received from the telegram server
     """
 
-    personal_particulars_table = DynamoDBTable(
-        Tables.PERSONAL_PARTICULARS.value, TABLE_KEYS[Tables.PERSONAL_PARTICULARS]
-    )
-
     chat_id = message.chat.id
-    user    = personal_particulars_table.get_item(chat_id)
+    user    = PERSONAL_PARTICULARS_TABLE.get_item(chat_id)
 
     if not user:
         # If user cannot be found, we prompt registration
