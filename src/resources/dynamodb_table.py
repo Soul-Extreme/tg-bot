@@ -48,7 +48,7 @@ class DynamoDBTable:
 
         return True
 
-    def get_item(self, partition_key_value: str, sort_key_value: str = None):
+    def get_item(self, partition_key_value, sort_key_value = None):
         """
         Retrieves an item from the table.
 

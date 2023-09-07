@@ -30,7 +30,7 @@ def handler(event, context):
         event_body = json.loads(event["body"])
 
         registration_status = register_member(event_body)
-        chat_id = event_body["User ID"]
+        chat_id = int(event_body["User ID"])
 
         if registration_status is True:
             print("Registration Success")
@@ -124,7 +124,7 @@ def register_member(form_data) -> bool:
         return False
 
 
-def create_profile(chat_id: str) -> bool:
+def create_profile(chat_id) -> bool:
     personal_particulars_table = DynamoDBTable(
         Tables.PERSONAL_PARTICULARS.value,
         TABLE_KEYS[Tables.PERSONAL_PARTICULARS]
