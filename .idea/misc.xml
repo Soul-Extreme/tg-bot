@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Black">
-    <option name="enabledOnReformat" value="true" />
-    <option name="enabledOnSave" value="true" />
     <option name="sdkUUID" value="f2f7cfd8-debd-43e2-b13b-5f11d5024f5d" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10 (se-tg-bot)" project-jdk-type="Python SDK" />

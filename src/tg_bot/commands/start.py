@@ -6,13 +6,11 @@ Date        : 2023-09-01
 Description : Executes the /start command for the SE Telegram Bot
 """
 
-import os
-
 import telebot
-import requests
 
-from src.resources.dynamodb_table import DynamoDBTable
-from src.resources.table_names import Tables, TABLE_KEYS
+from src.resources.dynamodb_table                           import DynamoDBTable
+from src.resources.table_data.tables                        import Tables, TABLE_KEYS
+from src.resources.table_data.personal_particulars_table    import PersonalParticularsFields
 
 
 # ======================================================================================================================
@@ -35,7 +33,7 @@ def command_start(bot: telebot.TeleBot, message):
     )
 
     chat_id = message.chat.id
-    user = personal_particulars_table.get_item(chat_id)
+    user    = personal_particulars_table.get_item(chat_id)
 
     if not user:
         # If user cannot be found, we prompt registration
@@ -47,15 +45,19 @@ def command_start(bot: telebot.TeleBot, message):
         )
 
         bot.send_photo(
-            chat_id=chat_id,
-            photo="https://i.imgur.com/xNSx2QD.png",
-            caption=registration_prompt_message,
-            parse_mode="HTML",
+            chat_id     =chat_id,
+            photo       ="https://i.imgur.com/xNSx2QD.png",
+            caption     =registration_prompt_message,
+            parse_mode  ="HTML",
             reply_markup=gen_registration_keyboard_markup(),
         )
 
     else:
-        name = user["preferred_name"] if user["preferred_name"] else user["full_name"]
+        name = user[PersonalParticularsFields.FULL_NAME.value]
+
+        if user[PersonalParticularsFields.PREFERRED_NAME.value]:
+            name = user[PersonalParticularsFields.PREFERRED_NAME.value]
+
         bot.send_message(chat_id, f"Welcome back {name}! How may I assist you?")
 
 

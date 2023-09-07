@@ -12,8 +12,10 @@ import logging
 
 import telebot
 
-from src.resources.dynamodb_table import DynamoDBTable
-from src.resources.table_names import Tables, TABLE_KEYS
+from src.resources.dynamodb_table                           import DynamoDBTable
+from src.resources.table_data.tables                        import Tables, TABLE_KEYS
+from src.resources.table_data.personal_particulars_table    import PersonalParticularsFields
+from src.resources.table_data.member_profile_table          import MemberProfileFields
 
 # ======================================================================================================================
 
@@ -26,18 +28,18 @@ se_telegram_bot = telebot.TeleBot(os.getenv("TELEGRAM_BOT_TOKEN"), threaded=Fals
 def handler(event, context):
     try:
         event_body = json.loads(event["body"])
-        registration_status = register_member(event_body)
 
-        if registration_status:
-            name = (
-                event_body["Preferred Name"]
-                if event_body["Preferred Name"]
-                else event_body["Full Name"]
-            )
-            se_telegram_bot.send_message(
-                chat_id=int(event_body["User ID"]),
-                text=f"Thank you for registering for Soul Extreme {name}! How may I assist you?",
-            )
+        registration_status = register_member(event_body)
+        chat_id = event_body["User ID"]
+
+        if registration_status is True:
+            profile_created = create_profile(chat_id)
+
+            if profile_created is True:
+                se_telegram_bot.send_message(
+                    chat_id=chat_id,
+                    text=f"Thank you for registering for Soul Extreme! How may I assist you?",
+                )
 
         return {"statusCode": 200}
 
@@ -54,72 +56,91 @@ def handler(event, context):
 def register_member(form_data) -> bool:
     """
     Parses the form_data and inserts into the personal-particulars database.
-    A default member profile will also be created.
 
     :param form_data: The form data from the submitted registration form
     :returns True if registration succeeds. False if it fails.
     """
 
     personal_particulars_table = DynamoDBTable(
-        Tables.PERSONAL_PARTICULARS.value, TABLE_KEYS[Tables.PERSONAL_PARTICULARS]
+        Tables.PERSONAL_PARTICULARS.value,
+        TABLE_KEYS[Tables.PERSONAL_PARTICULARS]
     )
-    member_profile_table = DynamoDBTable(
-        Tables.MEMBER_PROFILE.value, TABLE_KEYS[Tables.MEMBER_PROFILE]
-    )
-
-    # These are all hard-coded to match the ones in the form_data. If the form fields change, so must these!
-    # Students have an extra set of fields to extract
 
     var_map = {
-        "User ID": "chat_id",
-        "Full Name": "full_name",
-        "Preferred Name": "preferred_name",
-        "Phone Number": "phone_number",
-        "Telegram Handle": "telegram_handle",
-        "Last 4 Characters of NRIC": "nric_last4",
-        "Student ID": "student_id",
-        "Cluster": "cluster",
-        "Programme": "programme",
-        "Year": "year",
-        "Graduation Year": "graduation_year",
-        "Emergency Contact Name": "emergency_contact_name",
-        "Emergency Contact Relation": "emergency_contact_relation",
-        "Emergency Contact Number": "emergency_contact_number",
-        "Which genre(s) are you registering for?": "genre",
-        "Shirt Size": "shirt_size",
-        "Jacket Size": "jacket_size",
+        "User ID": PersonalParticularsFields.CHAT_ID,
+        "Full Name": PersonalParticularsFields.FULL_NAME,
+        "Preferred Name": PersonalParticularsFields.PREFERRED_NAME,
+        "Phone Number": PersonalParticularsFields.PHONE_NUMBER,
+        "Telegram Handle": PersonalParticularsFields.TELEGRAM_HANDLE,
+        "Last 4 Characters of NRIC": PersonalParticularsFields.NRIC_LAST4,
+        "Student Status": PersonalParticularsFields.STUDENT_STATUS,
+        "Student ID": PersonalParticularsFields.STUDENT_ID,
+        "Cluster": PersonalParticularsFields.CLUSTER,
+        "Programme": PersonalParticularsFields.PROGRAMME,
+        "Year": PersonalParticularsFields.YEAR,
+        "Graduation Year": PersonalParticularsFields.GRADUATION_YEAR,
+        "Emergency Contact Name": PersonalParticularsFields.EMERGENCY_CONTACT_NAME,
+        "Emergency Contact Relation": PersonalParticularsFields.EMERGENCY_CONTACT_RELATION,
+        "Emergency Contact Number": PersonalParticularsFields.EMERGENCY_CONTACT_NUMBER,
+        "Which genre(s) are you registering for?": PersonalParticularsFields.GENRE,
+        "Shirt Size": PersonalParticularsFields.SHIRT_SIZE,
+        "Jacket Size": PersonalParticularsFields.JACKET_SIZE,
     }
 
     personal_particulars_item = {}
-    for field, value in form_data:
-        personal_particulars_item[var_map[field]] = value
+    for field, value in form_data.items():
+        db_field = var_map[field].value
+        personal_particulars_item[db_field] = value
 
-    # Convert certain fields to numbers (int). Only applies to students!
-    if personal_particulars_item["student_status"] == "Student":
-        personal_particulars_item["student_id"] = int(
-            personal_particulars_item["student_id"]
-        )
-        personal_particulars_item["year"] = int(personal_particulars_item["year"])
-        personal_particulars_item["graduation_year"] = int(
-            personal_particulars_item["graduation_year"]
-        )
+        # Special Handling for genre which needs to be mapped to an enum
+        if db_field == PersonalParticularsFields.GENRE.value:
+            genre_value = ", ".join(value)
+            personal_particulars_item[db_field] = genre_value
 
-    # Create a member profile
-    member_profile_item = {
-        "chat_id": int(personal_particulars_item["chat_id"]),
-        "name": (
-            personal_particulars_item["preferred_name"]
-            if personal_particulars_item["preferred_name"]
-            else personal_particulars_item["full_name"]
-        ),
-        "genre": personal_particulars_item["genre"],
-        "credits": 0,
-    }
+    # Convert certain fields
+    match personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS.value]:
+        case "Student":
+            personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS.value] = True
+        case "Alumni":
+            personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS.value] = False
+
+    year_string = personal_particulars_item[PersonalParticularsFields.YEAR.value]
+    personal_particulars_item[PersonalParticularsFields.YEAR.value] = int(year_string)
+
+    graduation_year_string = personal_particulars_item[PersonalParticularsFields.GRADUATION_YEAR.value]
+    personal_particulars_item[PersonalParticularsFields.GRADUATION_YEAR.value] = int(graduation_year_string)
 
     try:
         personal_particulars_table.put_item(personal_particulars_item)
-        member_profile_table.put_item(member_profile_item)
+        return True
+    except Exception as error:
+        print(error)
+        return False
 
+
+def create_profile(chat_id) -> bool:
+    personal_particulars_table = DynamoDBTable(
+        Tables.PERSONAL_PARTICULARS.value,
+        TABLE_KEYS[Tables.PERSONAL_PARTICULARS]
+    )
+    member_profile_table = DynamoDBTable(
+        Tables.MEMBER_PROFILE.value,
+        TABLE_KEYS[Tables.MEMBER_PROFILE]
+    )
+
+    user = personal_particulars_table.get_item(chat_id)
+
+    # Build a new member profile
+    member_profile_item = {
+        MemberProfileFields.CHAT_ID.value: user[PersonalParticularsFields.CHAT_ID.value],
+        MemberProfileFields.STUDENT_STATUS.value: user[PersonalParticularsFields.STUDENT_STATUS.value],
+        MemberProfileFields.GENRE.value: user[PersonalParticularsFields.GENRE.value],
+        MemberProfileFields.CREDITS.value: 0,
+        MemberProfileFields.ADMIN.value: False
+    }
+
+    try:
+        member_profile_table.put_item(member_profile_item)
         return True
     except Exception as error:
         print(error)

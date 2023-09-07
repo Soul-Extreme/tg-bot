@@ -29,11 +29,16 @@ def handler(event, context):
         update = telebot.types.Update.de_json(json.loads(event["body"]))
         se_telegram_bot.process_new_updates([update])
 
-        return {"statusCode": 200}
+        return {
+            "statusCode": 200
+        }
 
     except Exception as error:
         print(error)
-        return {"statusCode": 200}
+
+        return {
+            "statusCode": 200
+        }
 
 
 # ======================================================================================================================
