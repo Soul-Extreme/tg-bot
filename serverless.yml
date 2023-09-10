@@ -7,8 +7,8 @@ custom:
 provider:
   name: aws
   region: ap-southeast-1  # Singapore
-  runtime: ${self.custom.config.provider.runtime}
-  architecture: ${self.custom.config.provider.architecture}
+  runtime: ${self:custom.config.provider.runtime}
+  architecture: ${self:custom.config.provider.architecture}
 
 plugins:
   - serverless-python-requirements

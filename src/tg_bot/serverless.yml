@@ -1,7 +1,7 @@
 TG-BOT:
   handler: src/tg_bot/tg_bot.handler
-  timeout: ${self.custom.config.lambda.timeout}
-  memorySize: ${self.custom.config.lambda.memorySize}
+  timeout: ${self:custom.config.lambda.timeout}
+  memorySize: ${self:custom.config.lambda.memorySize}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
