@@ -145,8 +145,8 @@ def register_member(form_data):
         print(error)
         return False
 
-    name_to_return = personal_particulars_item[PersonalParticularsFields.FULL_NAME]
-    if personal_particulars_item[PersonalParticularsFields.PREFERRED_NAME]:
-        name_to_return = personal_particulars_item[PersonalParticularsFields.PREFERRED_NAME]
+    name_to_return = personal_particulars_item[PersonalParticularsFields.FULL_NAME.value]
+    if personal_particulars_item[PersonalParticularsFields.PREFERRED_NAME.value]:
+        name_to_return = personal_particulars_item[PersonalParticularsFields.PREFERRED_NAME.value]
 
     return True, name_to_return
