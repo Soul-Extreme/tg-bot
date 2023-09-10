@@ -3,8 +3,7 @@ File        : set_webhook.py
 Author      : Diren D Bharwani
 Date        : 2023-09-01
 
-Description :   Script for setting the webhook for the telegram bot through a GitHub action. There should not be a need
-                to run this often.
+Description : Script for setting the webhook for the telegram bot through GitHub Actions.
 """
 
 import requests

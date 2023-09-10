@@ -1,12 +1,14 @@
 service: se-tg-bot
-
 frameworkVersion: '3'
+
+custom:
+  config: ${file(./.config/config.yml):CONFIG}
 
 provider:
   name: aws
   region: ap-southeast-1  # Singapore
-  runtime: python3.10 # AWS Lambda supports up to Python 3.10
-  architecture: arm64
+  runtime: ${self.custom.config.provider.runtime}
+  architecture: ${self.custom.config.provider.architecture}
 
 plugins:
   - serverless-python-requirements
@@ -16,7 +18,6 @@ package:
   individually: true
   patterns:
     - 'src/**'
-    - 'assets/user_id_field.png'
     - '!node_modules/**'
     - '!package.json'
     - '!package-lock.json'

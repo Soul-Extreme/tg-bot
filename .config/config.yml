@@ -1,0 +1,7 @@
+CONFIG:
+  provider:
+    runtime: python3.10   # AWS Lambda supports up to Python 3.10
+    architecture: arm64
+  lambda:
+    timeout: 15           # seconds
+    memorySize: 256       # MB

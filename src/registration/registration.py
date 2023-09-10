@@ -29,14 +29,13 @@ def handler(event, context):
     try:
         event_body = json.loads(event["body"])
 
-        registration_status = register_member(event_body)
+        registration_status, name = register_member(event_body)
         chat_id = int(event_body["User ID"])
 
         if registration_status is True:
             se_telegram_bot.send_message(
                 chat_id=chat_id,
-                text=f"Thank you for registering for Soul Extreme! How may I assist you?",
-                allow_sending_without_reply=True
+                text=f"Thank you {name} for registering for Soul Extreme! How may I assist you?",
             )
 
         return {
@@ -55,7 +54,7 @@ def handler(event, context):
 # ======================================================================================================================
 
 
-def register_member(form_data) -> bool:
+def register_member(form_data):
     """
     Parses the form_data and
     1. Inserts into the personal-particulars table.
@@ -146,4 +145,8 @@ def register_member(form_data) -> bool:
         print(error)
         return False
 
-    return True
+    name_to_return = personal_particulars_item[PersonalParticularsFields.FULL_NAME]
+    if personal_particulars_item[PersonalParticularsFields.PREFERRED_NAME]:
+        name_to_return = personal_particulars_item[PersonalParticularsFields.PREFERRED_NAME]
+
+    return True, name_to_return

@@ -1,7 +1,7 @@
 REGISTRATION:
   handler: src/registration/registration.handler
-  timeout: 15 # seconds
-  memorySize: 256 # mb
+  timeout: ${self.custom.config.lambda.timeout}
+  memorySize: ${self.custom.config.lambda.memorySize}
   iamRoleStatements:
     - Effect: "Allow"
       Action:

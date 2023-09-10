@@ -1,7 +1,7 @@
 TG-BOT:
   handler: src/tg_bot/tg_bot.handler
-  timeout: 15 # seconds
-  memorySize: 256 # mb
+  timeout: ${self.custom.config.lambda.timeout}
+  memorySize: ${self.custom.config.lambda.memorySize}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -12,6 +12,7 @@ TG-BOT:
         - dynamodb:DeleteItem
       Resource:
         - "arn:aws:dynamodb:${self:provider.region}:*:table/personal-particulars"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/member-profile"
   events:
     - http:
         path: src/tg_bot
