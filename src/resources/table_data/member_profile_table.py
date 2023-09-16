@@ -14,8 +14,8 @@ from enum import Enum
 
 
 class MemberProfileFields(Enum):
-    CHAT_ID         = "chat_id"
-    STUDENT_STATUS  = "student_status"
-    GENRE           = "genre"
-    CREDITS         = "credits"
-    ADMIN           = "admin"
+    CHAT_ID = "chat_id"
+    STUDENT_STATUS = "student_status"
+    GENRE = "genre"
+    CREDITS = "credits"
+    ADMIN = "admin"

@@ -14,10 +14,12 @@ from .dynamodb_keys import DynamoDBKeySet
 
 # ======================================================================================================================
 
+
 class DynamoDBTable:
     """
     Encapsulates an AWS DynamoDB Table
     """
+
     __dynamodb = boto3.resource("dynamodb")
 
     def __init__(self, table_name: str, keys: DynamoDBKeySet):
@@ -48,7 +50,7 @@ class DynamoDBTable:
 
         return True
 
-    def get_item(self, partition_key_value, sort_key_value = None):
+    def get_item(self, partition_key_value, sort_key_value=None):
         """
         Retrieves an item from the table.
 
@@ -64,15 +66,13 @@ class DynamoDBTable:
 
             if self.__keys.sort_key is None:
                 response = self.__table.get_item(
-                    Key={
-                        self.__keys.partition_key.name: partition_key_value
-                    }
+                    Key={self.__keys.partition_key.name: partition_key_value}
                 )
             else:
                 response = self.__table.get_item(
                     Key={
                         self.__keys.partition_key.name: partition_key_value,
-                        self.__keys.sort_key.name: sort_key_value
+                        self.__keys.sort_key.name: sort_key_value,
                     }
                 )
 

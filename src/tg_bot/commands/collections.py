@@ -8,9 +8,12 @@ the rest of the project.
 """
 
 from .start import command_start
+from .credits import command_credits, callback_query_credits
 
 # ======================================================================================================================
 
-COMMAND_LIST = ["start"]
+COMMAND_LIST = ["start", "credits"]
 
-COMMAND_DICT = {"start": command_start}
+COMMAND_DICT = {"start": command_start, "credits": command_credits}
+
+CALLBACK_QUERY_DICT = {"credits": callback_query_credits}

@@ -25,5 +25,5 @@ class DynamoDBKeySet:
     """
 
     def __init__(self, partition_key: DynamoDBKey, sort_key: DynamoDBKey = None):
-        self.partition_key  = partition_key
-        self.sort_key       = sort_key
+        self.partition_key = partition_key
+        self.sort_key = sort_key

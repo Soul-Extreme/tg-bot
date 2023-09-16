@@ -11,13 +11,14 @@ import os
 
 # ======================================================================================================================
 
-bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
-apigw_endpoint = os.getenv('TG_BOT_APIGW_ENDPOINT')
+bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+apigw_endpoint = os.getenv("TG_BOT_APIGW_ENDPOINT")
 
 try:
-    response = requests.post(f'https://api.telegram.org/bot{bot_token}/setWebhook', json={
-        "url": apigw_endpoint
-    })
+    response = requests.post(
+        f"https://api.telegram.org/bot{bot_token}/setWebhook",
+        json={"url": apigw_endpoint},
+    )
 
     print(f"Status Code: {response.status_code}\n{response.json}")
 

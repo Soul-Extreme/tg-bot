@@ -12,7 +12,7 @@ import json
 
 import telebot
 
-from .commands.collections import COMMAND_LIST, COMMAND_DICT
+from .commands.collections import COMMAND_LIST, COMMAND_DICT, CALLBACK_QUERY_DICT
 
 # ======================================================================================================================
 
@@ -29,16 +29,12 @@ def handler(event, context):
         update = telebot.types.Update.de_json(json.loads(event["body"]))
         se_telegram_bot.process_new_updates([update])
 
-        return {
-            "statusCode": 200
-        }
+        return {"statusCode": 200}
 
     except Exception as error:
         print(error)
 
-        return {
-            "statusCode": 200
-        }
+        return {"statusCode": 200}
 
 
 # ======================================================================================================================
@@ -62,4 +58,4 @@ def callback_dispatch(call):
     Dispatches callback queries from inline keyboard buttons to their respective handlers
     """
 
-    # CALLBACK_QUERY_DICT[call.data["command"]](se_telegram_bot, call)
+    CALLBACK_QUERY_DICT[call.data["command"]](se_telegram_bot, call)

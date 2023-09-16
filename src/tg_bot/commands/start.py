@@ -8,9 +8,10 @@ Description : Executes the /start command for the SE Telegram Bot
 
 import telebot
 
-from src.resources.dynamodb_table                           import DynamoDBTable
-from src.resources.table_data.tables                        import PERSONAL_PARTICULARS_TABLE
-from src.resources.table_data.personal_particulars_table    import PersonalParticularsFields
+from src.resources.table_data.tables import PERSONAL_PARTICULARS_TABLE
+from src.resources.table_data.personal_particulars_table import (
+    PersonalParticularsFields,
+)
 
 
 # ======================================================================================================================
@@ -29,24 +30,24 @@ def command_start(bot: telebot.TeleBot, message):
     """
 
     chat_id = message.chat.id
-    user    = PERSONAL_PARTICULARS_TABLE.get_item(chat_id)
+    user = PERSONAL_PARTICULARS_TABLE.get_item(chat_id)
 
     if not user:
         # If user cannot be found, we prompt registration
         registration_prompt_message = (
             f"Welcome to the Soul Extreme Telegram Bot!\n\nYour <b>user ID</b> is:\n<code>{chat_id}</code>\nCopy and "
-            f"paste this into the user ID field on the registration form as shown in the attached image. (Tap on the "
+            f"paste this into the user ID field on the registration form as shown in the attached image.\n(Tap on the "
             f"ID to copy it)\n\nPlease click on the <b>Register</b> button below to register for Soul Extreme.\n\nYou "
             f"should receive a confirmation message once you've registered. If you do not, please contact a committee "
             f"member."
         )
 
         bot.send_photo(
-            chat_id     =chat_id,
-            photo       ="https://i.imgur.com/xNSx2QD.png",
-            caption     =registration_prompt_message,
-            parse_mode  ="HTML",
-            reply_markup=gen_registration_keyboard_markup(),
+            chat_id=chat_id,
+            photo="https://i.imgur.com/xNSx2QD.png",
+            caption=registration_prompt_message,
+            parse_mode="HTML",
+            reply_markup=prompt_registration_markup(),
         )
 
     else:
@@ -63,11 +64,10 @@ def command_start(bot: telebot.TeleBot, message):
 # ======================================================================================================================
 
 
-def gen_registration_keyboard_markup():
+def prompt_registration_markup():
     """
     Creates the inline keyboard to prompt Registration
 
-    :param chat_id: The chat_id that will be POSTed to the Google form for registration
     :return: The markup for the inline keyboard
     """
 
