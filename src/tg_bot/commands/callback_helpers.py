@@ -6,8 +6,6 @@ Date        : 2023-08-30
 Description : A collection of methods to maintain a common standard for callback queries and callback data
 """
 
-from .collections import CALLBACK_DATA_DICT
-
 # ======================================================================================================================
 
 
@@ -27,20 +25,3 @@ def create_callback_data(command: str, step: str, chat_id: int):
         raise ValueError(f"Incoming string from {command}: {step} is too long! Unable to create callback data!")
 
     return final_string
-
-
-def decode_callback_data(callback_data: str):
-    """
-    Decodes and breaks down the callback data into it's individual parts.
-
-    :param callback_data: The data to break down
-    :return: The data as a dictionary
-    """
-
-    split_data = callback_data.split(";")
-    command, step, chat_id = [data for data in split_data]
-
-    data = CALLBACK_DATA_DICT[command][step]
-    data["chat_id"] = int(chat_id)
-
-    return data
