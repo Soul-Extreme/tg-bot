@@ -8,7 +8,7 @@ the rest of the project.
 """
 
 from .start import command_start
-from .credits import command_credits, callback_query_credits
+from .credits import command_credits, callback_query_credits, Steps
 
 # ======================================================================================================================
 
@@ -17,3 +17,18 @@ COMMAND_LIST = ["start", "credits"]
 COMMAND_DICT = {"start": command_start, "credits": command_credits}
 
 CALLBACK_QUERY_DICT = {"credits": callback_query_credits}
+
+# Always follow this order:
+# command: {
+#   step: {
+#       data...
+#   }
+# }
+CALLBACK_DATA_DICT = {
+    "credits": {
+        Steps.BUY_CREDITS.value: {
+            "command": "credits",
+            "step": Steps.BUY_CREDITS.value,
+        }
+    }
+}

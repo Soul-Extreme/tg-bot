@@ -6,7 +6,6 @@ Date        : 2023-09-01
 Description : Executes the /credits command for the SE Telegram Bot
 """
 
-import json
 from enum import Enum
 
 import telebot
@@ -64,25 +63,6 @@ def command_credits(bot: telebot.TeleBot, message):
         )
 
 
-def credits_menu_markup(chat_id):
-    """
-    Creates the inline keyboard for the credits menu
-
-    :param chat_id: The chat_id where this inline keyboard is created.
-    :return: The markup for the inline keyboard
-    """
-
-    # The values in each button for an inline keyboard will only execute the first kwarg. Multiple is not supported!
-    buy_credits_callback_data = {"command": "credits", "step": Steps.BUY_CREDITS, "chat_id": chat_id}
-
-    markup = telebot.util.quick_markup(
-        {"Buy Credits": {"callback_data": json.dumps(buy_credits_callback_data)}},
-        row_width=1,
-    )
-
-    return markup
-
-
 def callback_query_credits(bot, data):
     match data["step"]:
         case Steps.BUY_CREDITS:
@@ -97,6 +77,25 @@ def callback_query_credits(bot, data):
 class Steps(str, Enum):
     BUY_CREDITS = "buy_credits"
     PAY = "pay"
+
+
+def credits_menu_markup(chat_id):
+    """
+    Creates the inline keyboard for the credits menu
+
+    :param chat_id: The chat_id where this inline keyboard is created.
+    :return: The markup for the inline keyboard
+    """
+
+    # The values in each button for an inline keyboard will only execute the first kwarg. Multiple is not supported!
+    buy_credits_callback_data = f"credits;{Steps.BUY_CREDITS.value};{chat_id}"
+
+    markup = telebot.util.quick_markup(
+        {"Buy Credits": {"callback_data": buy_credits_callback_data}},
+        row_width=1,
+    )
+
+    return markup
 
 
 def payment_menu(bot, chat_id):
