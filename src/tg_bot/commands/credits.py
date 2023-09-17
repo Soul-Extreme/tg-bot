@@ -10,7 +10,6 @@ from enum import Enum
 
 import telebot
 
-from .callback_helpers import create_callback_data
 from src.resources.table_data.tables import (
     PERSONAL_PARTICULARS_TABLE,
     MEMBER_PROFILE_TABLE,
@@ -58,7 +57,7 @@ def command_credits(bot: telebot.TeleBot, message):
             chat_id=chat_id,
             text=credits_info_message,
             parse_mode="HTML",
-            reply_markup=credits_menu_markup(chat_id),
+            reply_markup=credits_menu_markup(chat_id, message.id),
         )
 
 
@@ -88,7 +87,7 @@ def callback_query_credits(bot, data):
                 chat_id=chat_id,
                 text=payment_options_message,
                 parse_mode="HTML",
-                reply_markup=payment_menu_markup(chat_id),
+                reply_markup=payment_menu_markup(chat_id, int(data["message_id"])),
             )
         case Steps.PAY_PRORATE:
             bot.send_message(chat_id=chat_id, text="Paying Pro-rated")
@@ -107,18 +106,16 @@ class Steps(str, Enum):
     PAY_PACKAGE = "pay_package"
 
 
-def credits_menu_markup(chat_id: int):
+def credits_menu_markup(chat_id: int, message_id: int):
     """
     Creates the inline keyboard for the credits menu
 
     :param chat_id: The chat_id where this inline keyboard is created.
+    :param message_id: The message_id of this inline keyboard
     :return: The markup for the inline keyboard
     """
 
-    # Can't use a stringified json as it will exceed the 64-byte limit for callback data.
-    # Store the json in CALLBACK_DATA_DICT
-    # callback_data must be in the form
-    buy_credits_callback_data = create_callback_data("credits", Steps.BUY_CREDITS.value, chat_id)
+    buy_credits_callback_data = f"credits;{Steps.BUY_CREDITS.value};{chat_id};{message_id}"
 
     markup = telebot.util.quick_markup(
         {"Buy Credits": {"callback_data": buy_credits_callback_data}},
@@ -128,16 +125,17 @@ def credits_menu_markup(chat_id: int):
     return markup
 
 
-def payment_menu_markup(chat_id: int):
+def payment_menu_markup(chat_id: int, message_id: int):
     """
     Creates an inline keyboard for the payment menu
 
     :param chat_id: The chat_id where this inline keyboard is created
+    :param message_id: The message_id of this inline keyboard
     :return: The markup for the inline keyboard
     """
 
-    payment_prorate_callback_data = create_callback_data("credits", Steps.PAY_PRORATE, chat_id)
-    payment_package_callback_data = create_callback_data("credits", Steps.PAY_PACKAGE, chat_id)
+    payment_prorate_callback_data = f"credits;{Steps.PAY_PRORATE.value};{chat_id};{message_id}"
+    payment_package_callback_data = f"credits;{Steps.PAY_PACKAGE.value};{chat_id};{message_id}"
 
     markup = telebot.util.quick_markup(
         {
