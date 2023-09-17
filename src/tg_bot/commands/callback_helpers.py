@@ -21,7 +21,7 @@ def create_callback_data(command: str, step: str, chat_id: int):
     """
 
     final_string = f"{command};{step};{chat_id}"
-    if len(final_string).encode("utf-8") > 64:
+    if len(final_string.encode("utf-8")) > 64:
         raise ValueError(f"Incoming string from {command}: {step} is too long! Unable to create callback data!")
 
     return final_string
