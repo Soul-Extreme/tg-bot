@@ -63,36 +63,35 @@ def command_credits(bot: telebot.TeleBot, message):
 
 def callback_query_credits(bot, data):
     chat_id = int(data["chat_id"])
+    message_id = int(data["message_id"])
+
     user = MEMBER_PROFILE_TABLE.get_item(chat_id)
+    student_status = user[MemberProfileFields.STUDENT_STATUS.value]
+
+    prorated_amount = 10 if student_status else 13
+    package_amount = 25 if student_status else 35
+
+    student_status_string = "Student" if student_status else "Alumni"
 
     match data["step"]:
         case Steps.BUY_CREDITS:
-            student_status = user[MemberProfileFields.STUDENT_STATUS.value]
-
-            prorated_amount = 10 if student_status else 13
-            pack_amount = 25 if student_status else 35
-
-            student_status_string = "Student" if student_status else "Alumni"
-
             payment_options_message = (
-                f"Please select your purchase option below\n\n"
-                f"[{student_status_string}]\n"
-                f"<code><b>Credits   Price</b></code>\n"
-                f"<code>1         {prorated_amount}</code>\n"
-                f"<code>3         {pack_amount}</code>\n\n"
-                f"Terms and Conditions: /payment_t&c"
+                f"How many credits would you like?\n\n"
+                f"<b>[{student_status_string} Prices]</b>\n"
+                f"Prorated: ${prorated_amount} per credit\n"
+                f"Pacakge: ${package_amount} for 3 credits"
             )
 
             bot.send_message(
                 chat_id=chat_id,
                 text=payment_options_message,
                 parse_mode="HTML",
-                reply_markup=payment_menu_markup(chat_id, int(data["message_id"])),
+                reply_markup=payment_menu_markup(chat_id, message_id),
             )
         case Steps.PAY_PRORATE:
-            bot.send_message(chat_id=chat_id, text="Paying Pro-rated")
+            bot.edit_message_text(chat_id=chat_id, message_id=message_id, text="Paying Prorated")
         case Steps.PAY_PACKAGE:
-            bot.send_message(chat_id=chat_id, text="Paying Package")
+            bot.edit_message_text(chat_id=chat_id, message_id=message_id, text="Paying Package")
 
 
 # ======================================================================================================================
@@ -139,10 +138,9 @@ def payment_menu_markup(chat_id: int, message_id: int):
 
     markup = telebot.util.quick_markup(
         {
-            "1 credit": {"callback_data": payment_prorate_callback_data},
-            "3 credits": {"callback_data": payment_package_callback_data},
+            "1": {"callback_data": payment_prorate_callback_data},
+            "2": {"callback_data": payment_prorate_callback_data},
+            "3": {"callback_data": payment_package_callback_data},
         },
-        row_width=1,
+        row_width=3,
     )
-
-    return markup
