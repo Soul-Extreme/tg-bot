@@ -13,7 +13,7 @@ import json
 import telebot
 
 from .commands.callback_helpers import decode_callback_data
-from .commands.collections import COMMAND_LIST, COMMAND_DICT, CALLBACK_QUERY_DICT
+from .commands.collections import COMMAND_LIST, COMMAND_DICT, CALLBACK_QUERY_DICT, CALLBACK_DATA_DICT
 
 # ======================================================================================================================
 
@@ -59,5 +59,5 @@ def callback_dispatch(call):
     Dispatches callback queries from inline keyboard buttons to their respective handlers
     """
 
-    data = decode_callback_data(call.data)
+    data = decode_callback_data(call.data, CALLBACK_DATA_DICT)
     CALLBACK_QUERY_DICT[data["command"]](se_telegram_bot, data)
