@@ -6,18 +6,17 @@ Date        : 2023-09-01
 Description : Executes the /credits command for the SE Telegram Bot
 """
 
+import json
+from enum import Enum
+
 import telebot
 
 from src.resources.table_data.tables import (
     PERSONAL_PARTICULARS_TABLE,
     MEMBER_PROFILE_TABLE,
 )
-from src.resources.table_data.personal_particulars_table import (
-    PersonalParticularsFields,
-)
-from src.resources.table_data.member_profile_table import (
-    MemberProfileFields,
-)
+from src.resources.table_data.personal_particulars_table import PersonalParticularsFields
+from src.resources.table_data.member_profile_table import MemberProfileFields
 
 # ======================================================================================================================
 
@@ -49,11 +48,7 @@ def command_credits(bot: telebot.TeleBot, message):
             name = user_particulars[PersonalParticularsFields.PREFERRED_NAME.value]
 
         num_credits = user_profile[MemberProfileFields.CREDITS.value]
-        student_status = (
-            "Student"
-            if user_profile[MemberProfileFields.STUDENT_STATUS.value]
-            else "Alumni"
-        )
+        student_status = "Student" if user_profile[MemberProfileFields.STUDENT_STATUS.value] else "Alumni"
 
         credits_info_message = (
             f"Member Name: {name}\nStudent Status: {student_status}\n\n "
@@ -78,31 +73,30 @@ def credits_menu_markup(chat_id):
     """
 
     # The values in each button for an inline keyboard will only execute the first kwarg. Multiple is not supported!
+    buy_credits_callback_data = {"command": "credits", "step": Steps.BUY_CREDITS, "chat_id": chat_id}
+
     markup = telebot.util.quick_markup(
-        {
-            "Buy Credits": {
-                "callback_data": {
-                    "command": "credits",
-                    "chat_id": chat_id,
-                    "step": "pay",
-                }
-            }
-        },
+        {"Buy Credits": {"callback_data": json.dumps(buy_credits_callback_data)}},
         row_width=1,
     )
 
     return markup
 
 
-def callback_query_credits(bot, call):
-    match call.data["step"]:
-        case "pay":
-            payment_menu(bot, call.data["chat_id"])
+def callback_query_credits(bot, data):
+    match data["step"]:
+        case Steps.BUY_CREDITS:
+            payment_menu(bot, data["chat_id"])
 
 
 # ======================================================================================================================
 # HELPERS
 # ======================================================================================================================
+
+
+class Steps(str, Enum):
+    BUY_CREDITS = "buy_credits"
+    PAY = "pay"
 
 
 def payment_menu(bot, chat_id):

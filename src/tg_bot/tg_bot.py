@@ -58,4 +58,5 @@ def callback_dispatch(call):
     Dispatches callback queries from inline keyboard buttons to their respective handlers
     """
 
-    CALLBACK_QUERY_DICT[call.data["command"]](se_telegram_bot, call)
+    data = dict(keyValuePair.split("=") for keyValuePair in call.data.split(";"))
+    CALLBACK_QUERY_DICT[data["command"]](se_telegram_bot, call)

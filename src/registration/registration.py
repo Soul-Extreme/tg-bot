@@ -12,14 +12,11 @@ import logging
 
 import telebot
 
-from src.resources.dynamodb_table import DynamoDBTable
 from src.resources.table_data.tables import (
     PERSONAL_PARTICULARS_TABLE,
     MEMBER_PROFILE_TABLE,
 )
-from src.resources.table_data.personal_particulars_table import (
-    PersonalParticularsFields,
-)
+from src.resources.table_data.personal_particulars_table import PersonalParticularsFields
 from src.resources.table_data.member_profile_table import MemberProfileFields
 
 # ======================================================================================================================
@@ -34,10 +31,11 @@ def handler(event, context):
     try:
         event_body = json.loads(event["body"])
 
-        registration_status, name = register_member(event_body)
+        registration_status = register_member(event_body)
         chat_id = int(event_body["User ID"])
 
         if registration_status is True:
+            name = event_body["Preferred Name"] if event_body["Preferred Name"] else event_body["Full Name"]
             se_telegram_bot.send_message(
                 chat_id=chat_id,
                 text=f"Thank you {name} for registering for Soul Extreme! How may I assist you?",
@@ -58,11 +56,11 @@ def handler(event, context):
 def register_member(form_data):
     """
     Parses the form_data and
-    1. Inserts into the personal-particulars table.
-    2. Builds a new member profile and inserts it into the member-profile table.
+    1. Inserts into the Personal Particulars table.
+    2. Builds a new member profile and inserts it into the Member Profile table.
 
     :param form_data: The form data from the submitted registration form.
-    :returns True if registration succeeds. False if it fails.
+    :return: True if
     """
     personal_particulars_key_map = {
         "User ID": PersonalParticularsFields.CHAT_ID,
@@ -85,52 +83,35 @@ def register_member(form_data):
         "Jacket Size": PersonalParticularsFields.JACKET_SIZE,
     }
 
-    personal_particulars_state = False
-    member_profile_state = False
-
     personal_particulars_item = {}
     for field, value in form_data.items():
-        personal_particulars_field = personal_particulars_key_map[field].value
-        personal_particulars_item[personal_particulars_field] = value
+        table_field = personal_particulars_key_map[field].value
+        personal_particulars_item[table_field] = value
 
         # Special Handling for genre which needs to be mapped to an enum
-        if personal_particulars_field == PersonalParticularsFields.GENRE.value:
+        if table_field == PersonalParticularsFields.GENRE:
             genre_value = ", ".join(value)
-            personal_particulars_item[personal_particulars_field] = genre_value
+            personal_particulars_item[table_field] = genre_value
 
     # Convert certain fields to their correct types
-    chat_id = personal_particulars_item[PersonalParticularsFields.CHAT_ID.value]
-    personal_particulars_item[PersonalParticularsFields.CHAT_ID.value] = int(chat_id)
+    chat_id = personal_particulars_item[PersonalParticularsFields.CHAT_ID]
+    personal_particulars_item[PersonalParticularsFields.CHAT_ID] = int(chat_id)
 
-    match personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS.value]:
+    match personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS]:
         case "Student":
-            personal_particulars_item[
-                PersonalParticularsFields.STUDENT_STATUS.value
-            ] = True
+            personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS] = True
 
-            year_string = personal_particulars_item[
-                PersonalParticularsFields.YEAR.value
-            ]
-            personal_particulars_item[PersonalParticularsFields.YEAR.value] = int(
-                year_string
-            )
+            year = personal_particulars_item[PersonalParticularsFields.YEAR]
+            personal_particulars_item[PersonalParticularsFields.YEAR] = int(year)
 
-            graduation_year_string = personal_particulars_item[
-                PersonalParticularsFields.GRADUATION_YEAR.value
-            ]
-            personal_particulars_item[
-                PersonalParticularsFields.GRADUATION_YEAR.value
-            ] = int(graduation_year_string)
+            graduation_year = personal_particulars_item[PersonalParticularsFields.GRADUATION_YEAR]
+            personal_particulars_item[PersonalParticularsFields.GRADUATION_YEAR] = int(graduation_year)
 
         case "Alumni":
-            personal_particulars_item[
-                PersonalParticularsFields.STUDENT_STATUS.value
-            ] = False
+            personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS] = False
 
     try:
-        personal_particulars_state = PERSONAL_PARTICULARS_TABLE.put_item(
-            personal_particulars_item
-        )
+        personal_particulars_state = PERSONAL_PARTICULARS_TABLE.put_item(personal_particulars_item)
         if personal_particulars_state is True:
             print(f"Registration success for {chat_id}!")
     except Exception as error:
@@ -138,18 +119,15 @@ def register_member(form_data):
         return False
 
     # Create member profile
+    student_status = personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS]
+    genre = personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS]
+
     member_profile_item = {
-        MemberProfileFields.CREDITS.value: 0,
-        MemberProfileFields.ADMIN.value: False,
-        MemberProfileFields.CHAT_ID.value: (
-            personal_particulars_item[PersonalParticularsFields.CHAT_ID.value]
-        ),
-        MemberProfileFields.STUDENT_STATUS.value: (
-            personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS.value]
-        ),
-        MemberProfileFields.GENRE.value: (
-            personal_particulars_item[PersonalParticularsFields.GENRE.value]
-        ),
+        MemberProfileFields.CREDITS: 0,
+        MemberProfileFields.ADMIN: False,
+        MemberProfileFields.CHAT_ID: int(chat_id),
+        MemberProfileFields.STUDENT_STATUS: student_status,
+        MemberProfileFields.GENRE: genre,
     }
 
     try:
@@ -160,12 +138,4 @@ def register_member(form_data):
         print(error)
         return False
 
-    name_to_return = personal_particulars_item[
-        PersonalParticularsFields.FULL_NAME.value
-    ]
-    if personal_particulars_item[PersonalParticularsFields.PREFERRED_NAME.value]:
-        name_to_return = personal_particulars_item[
-            PersonalParticularsFields.PREFERRED_NAME.value
-        ]
-
-    return True, name_to_return
+    return True

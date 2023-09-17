@@ -13,7 +13,7 @@ from enum import Enum
 # ======================================================================================================================
 
 
-class PersonalParticularsFields(Enum):
+class PersonalParticularsFields(str, Enum):
     CHAT_ID = "chat_id"
     FULL_NAME = "full_name"
     PREFERRED_NAME = "preferred_name"

@@ -9,9 +9,7 @@ Description : Executes the /start command for the SE Telegram Bot
 import telebot
 
 from src.resources.table_data.tables import PERSONAL_PARTICULARS_TABLE
-from src.resources.table_data.personal_particulars_table import (
-    PersonalParticularsFields,
-)
+from src.resources.table_data.personal_particulars_table import PersonalParticularsFields
 
 
 # ======================================================================================================================
