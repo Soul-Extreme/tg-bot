@@ -12,7 +12,8 @@ import json
 
 import telebot
 
-from .commands.collections import COMMAND_LIST, COMMAND_DICT, CALLBACK_QUERY_DICT, CALLBACK_DATA_DICT
+from .commands.collections import COMMAND_LIST, COMMAND_DICT, CALLBACK_QUERY_DICT
+from .commands.callback_helpers import decode_callback_data
 
 # ======================================================================================================================
 
@@ -58,10 +59,5 @@ def callback_dispatch(call):
     Dispatches callback queries from inline keyboard buttons to their respective handlers
     """
 
-    split_data = call.data.split(";")
-    command, step, chat_id = [data for data in split_data]
-
-    data = CALLBACK_DATA_DICT[command][step]
-    data["chat_id"] = int(chat_id)
-
-    CALLBACK_QUERY_DICT[command](se_telegram_bot, data)
+    data = decode_callback_data(call.data)
+    CALLBACK_QUERY_DICT[data["command"]](se_telegram_bot, data)

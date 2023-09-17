@@ -29,6 +29,14 @@ CALLBACK_DATA_DICT = {
         Steps.BUY_CREDITS.value: {
             "command": "credits",
             "step": Steps.BUY_CREDITS.value,
-        }
+        },
+        Steps.PAY_PRORATE.value: {
+            "command": "credits",
+            "step": Steps.PAY_PRORATE.value,
+        },
+        Steps.PAY_PACKAGE.value: {
+            "command": "credits",
+            "step": Steps.PAY_PACKAGE.value,
+        },
     }
 }
