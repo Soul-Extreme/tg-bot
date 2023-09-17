@@ -144,3 +144,5 @@ def payment_menu_markup(chat_id: int, message_id: int):
         },
         row_width=3,
     )
+
+    return markup
