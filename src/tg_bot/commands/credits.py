@@ -64,12 +64,24 @@ def command_credits(bot: telebot.TeleBot, message):
 
 def callback_query_credits(bot, data):
     chat_id = int(data["chat_id"])
+    user = MEMBER_PROFILE_TABLE.get_item(chat_id)
 
     match data["step"]:
         case Steps.BUY_CREDITS:
+            student_status = user[MemberProfileFields.STUDENT_STATUS.value]
+
+            prorated_amount = 10 if student_status else 13
+            pack_amount = 25 if student_status else 35
+
+            student_status_string = "Student" if student_status else "Alumni"
+
             payment_options_message = (
-                f"Please select your purchase option below\nPurchase will be done through <b>PayNow</b>\n\n"
-                f"Terms and Conditions: /payment-t&c"
+                f"Please select your purchase option below\n\n"
+                f"[{student_status_string}]\n"
+                f"<code><b>Credits   Price</b></code>\n"
+                f"<code>1         {prorated_amount}</code>\n"
+                f"<code>3         {pack_amount}</code>\n\n"
+                f"Terms and Conditions: /payment_t&c"
             )
 
             bot.send_message(
@@ -124,23 +136,13 @@ def payment_menu_markup(chat_id: int):
     :return: The markup for the inline keyboard
     """
 
-    user = MEMBER_PROFILE_TABLE.get_item(chat_id)
-    student_status = user[MemberProfileFields.STUDENT_STATUS.value]
-
-    prorated_amount = 10
-    pack_amount = 25
-
-    if student_status is False:
-        prorated_amount = 13
-        pack_amount = 35
-
     payment_prorate_callback_data = create_callback_data("credits", Steps.PAY_PRORATE, chat_id)
     payment_package_callback_data = create_callback_data("credits", Steps.PAY_PACKAGE, chat_id)
 
     markup = telebot.util.quick_markup(
         {
-            f"1 credit: {prorated_amount}": {"callback_data": payment_prorate_callback_data},
-            f"3 credits: {pack_amount}": {"callback_data": payment_package_callback_data},
+            "1 credit": {"callback_data": payment_prorate_callback_data},
+            "3 credits": {"callback_data": payment_package_callback_data},
         },
         row_width=1,
     )
