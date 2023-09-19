@@ -61,5 +61,8 @@ def callback_dispatch(call):
     Dispatches callback queries from inline keyboard buttons to their respective handlers
     """
 
+    print(call.data)
+
     data = unpack_callback_data(call.data)
+    print(data)
     CALLBACK_QUERY_MAP[data["command"]](se_telegram_bot, data)

@@ -63,6 +63,7 @@ def pack_callback_data(command: str, step: Step, chat_id: int, message_id: int):
 
 def unpack_callback_data(callback_data: str):
     unpacked_dict = callback_data.split(";")
+    print(unpacked_dict)
     command, step, chat_id, message_id = [i for i in unpacked_dict]
 
     data = CALLBACK_DATA[command][step]
