@@ -13,7 +13,7 @@ import json
 import telebot
 
 from .commands.callback_helpers import unpack_callback_data
-from .commands.collections import COMMAND_MAP, CALLBACK_QUERY_MAP
+from .commands.function_maps import COMMAND_MAP, CALLBACK_QUERY_MAP
 
 # ======================================================================================================================
 

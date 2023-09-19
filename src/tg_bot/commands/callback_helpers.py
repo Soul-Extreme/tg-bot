@@ -6,9 +6,40 @@ Date        : 2023-08-30
 Description : Helper methods for dealing with callback data
 """
 
-from .collections import Step, CALLBACK_DATA
+from enum import Enum
 
 # ======================================================================================================================
+
+
+class Step(Enum):
+    def __str__(self):
+        return self.value
+
+
+class CreditsStep(str, Step):
+    BUY_CREDITS = "buy_credits"
+    PAY_INDIVIDUAL = "pay_individual"
+    PAY_PACKAGE = "pay_package"
+    INDIVIDUAL_X1 = "individual_x1"
+    INDIVIDUAL_X2 = "individual_x2"
+
+
+CALLBACK_DATA = {
+    "credits": {
+        CreditsStep.BUY_CREDITS.value: {
+            "command": "credits",
+            "step": CreditsStep.BUY_CREDITS.value,
+        },
+        CreditsStep.PAY_INDIVIDUAL.value: {
+            "command": "credits",
+            "step": CreditsStep.PAY_INDIVIDUAL.value,
+        },
+        CreditsStep.PAY_PACKAGE.value: {
+            "command": "credits",
+            "step": CreditsStep.PAY_PACKAGE.value,
+        },
+    }
+}
 
 
 def pack_callback_data(command: str, step: Step, chat_id: int, message_id: int):

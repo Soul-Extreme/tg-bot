@@ -16,10 +16,11 @@ from src.resources.table_data.tables import (
 )
 from src.resources.table_data.personal_particulars_table import PersonalParticularsFields
 from src.resources.table_data.member_profile_table import MemberProfileFields
-from .collections import CreditsStep, CLASS_PRICING
-from .callback_helpers import pack_callback_data
+from .callback_helpers import CreditsStep, pack_callback_data
 
 # ======================================================================================================================
+
+CLASS_PRICING = {"Student": {"Individual": 10, "Package": 25}, "Alumni": {"Individual": 13, "Package": 35}}
 
 
 def command_credits(bot: telebot.TeleBot, message):
