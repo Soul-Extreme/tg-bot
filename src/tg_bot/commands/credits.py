@@ -78,6 +78,7 @@ def callback_query_credits(bot, data):
 
     match data["step"]:
         case CreditsStep.BUY_CREDITS:
+            print("buy credit menu")
             payment_options_message = (
                 f"How many class credits would you like to buy?\n\n"
                 f"<b>[{student_status} Pricing]</b>\n"
