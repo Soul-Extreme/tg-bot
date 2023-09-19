@@ -65,6 +65,8 @@ def command_credits(bot: telebot.TeleBot, message):
 
 
 def callback_query_credits(bot, data):
+    print("credits callback query")
+
     chat_id = int(data["chat_id"])
     message_id = int(data["message_id"])
 
@@ -90,18 +92,10 @@ def callback_query_credits(bot, data):
                 reply_markup=payment_menu_markup(chat_id, message_id),
             )
         case CreditsStep.PAY_INDIVIDUAL:
-            individual_payment_message = (
-                f"How many class credits would you like to buy?\n\n"
-                f"<b>[{student_status} Pricing]</b>\n"
-                f"Individual: ${individual_price} per class credit\n"
-                f"Package: ${package_price} for 3 class credits"
-            )
-
-            bot.edit_message_text(
+            print("individual payment")
+            bot.edit_message_reply_markup(
                 chat_id=chat_id,
                 message_id=message_id,
-                text=individual_payment_message,
-                parse_mode="HTML",
                 reply_markup=individual_payment_menu_markup(chat_id, message_id),
             )
         case CreditsStep.INDIVIDUAL_X1:
