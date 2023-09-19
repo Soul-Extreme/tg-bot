@@ -7,36 +7,45 @@ Description : A collection of helper variables and functions to clean up the int
 the rest of the project.
 """
 
+from enum import Enum
 from .start import command_start
-from .credits import command_credits, callback_query_credits, Steps
+from .credits import command_credits, callback_query_credits
 
 # ======================================================================================================================
 
-COMMAND_LIST = ["start", "credits"]
 
-COMMAND_DICT = {"start": command_start, "credits": command_credits}
+class Step(Enum):
+    def __str__(self):
+        return self.value
 
-CALLBACK_QUERY_DICT = {"credits": callback_query_credits}
 
-# Always follow this order:
-# command: {
-#   step: {
-#       data...
-#   }
-# }
-CALLBACK_DATA_DICT = {
+class CreditsStep(str, Step):
+    BUY_CREDITS = "buy_credits"
+    PAY_INDIVIDUAL = "pay_individual"
+    PAY_PACKAGE = "pay_package"
+    INDIVIDUAL_X1 = "individual_x1"
+    INDIVIDUAL_X2 = "individual_x2"
+
+
+COMMAND_MAP = {"start": command_start, "credits": command_credits}
+
+CALLBACK_QUERY_MAP = {"credits": callback_query_credits}
+
+CALLBACK_DATA = {
     "credits": {
-        Steps.BUY_CREDITS.value: {
+        CreditsStep.BUY_CREDITS.value: {
             "command": "credits",
-            "step": Steps.BUY_CREDITS.value,
+            "step": CreditsStep.BUY_CREDITS.value,
         },
-        Steps.PAY_PRORATE.value: {
+        CreditsStep.PAY_INDIVIDUAL.value: {
             "command": "credits",
-            "step": Steps.PAY_PRORATE.value,
+            "step": CreditsStep.PAY_INDIVIDUAL.value,
         },
-        Steps.PAY_PACKAGE.value: {
+        CreditsStep.PAY_PACKAGE.value: {
             "command": "credits",
-            "step": Steps.PAY_PACKAGE.value,
+            "step": CreditsStep.PAY_PACKAGE.value,
         },
     }
 }
+
+CLASS_PRICING = {"Student": {"Individual": 10, "Package": 25}, "Alumni": {"Individual": 13, "Package": 35}}

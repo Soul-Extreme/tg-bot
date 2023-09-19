@@ -12,7 +12,8 @@ import json
 
 import telebot
 
-from .commands.collections import COMMAND_LIST, COMMAND_DICT, CALLBACK_QUERY_DICT, CALLBACK_DATA_DICT
+from .commands.callback_helpers import unpack_callback_data
+from .commands.collections import COMMAND_MAP, CALLBACK_QUERY_MAP
 
 # ======================================================================================================================
 
@@ -20,6 +21,8 @@ logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
 se_telegram_bot = telebot.TeleBot(os.getenv("TELEGRAM_BOT_TOKEN"), threaded=False)
+
+command_list = ["start", "credits"]
 
 
 def handler(event, context):
@@ -42,14 +45,14 @@ def handler(event, context):
 # ======================================================================================================================
 
 
-@se_telegram_bot.message_handler(commands=COMMAND_LIST)
+@se_telegram_bot.message_handler(commands=command_list)
 def command_dispatch(message):
     """
     Dispatches commands message to their respective handlers
     """
 
     command = message.text.removeprefix("/")
-    COMMAND_DICT[command](se_telegram_bot, message)
+    COMMAND_MAP[command](se_telegram_bot, message)
 
 
 @se_telegram_bot.callback_query_handler(func=lambda call: True)
@@ -58,11 +61,5 @@ def callback_dispatch(call):
     Dispatches callback queries from inline keyboard buttons to their respective handlers
     """
 
-    split_data = call.data.split(";")
-    command, step, chat_id, message_id = [data for data in split_data]
-
-    data = CALLBACK_DATA_DICT[command][step]
-    data["chat_id"] = int(chat_id)
-    data["message_id"] = int(message_id)
-
-    CALLBACK_QUERY_DICT[data["command"]](se_telegram_bot, data)
+    data = unpack_callback_data(call.data)
+    CALLBACK_QUERY_MAP[data["command"]](se_telegram_bot, data)

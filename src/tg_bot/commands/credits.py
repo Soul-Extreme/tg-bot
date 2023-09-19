@@ -16,6 +16,8 @@ from src.resources.table_data.tables import (
 )
 from src.resources.table_data.personal_particulars_table import PersonalParticularsFields
 from src.resources.table_data.member_profile_table import MemberProfileFields
+from .collections import CreditsStep, CLASS_PRICING
+from .callback_helpers import pack_callback_data
 
 # ======================================================================================================================
 
@@ -49,8 +51,8 @@ def command_credits(bot: telebot.TeleBot, message):
         num_credits = user_profile[MemberProfileFields.CREDITS.value]
 
         credits_info_message = (
-            f"{name}'s Remaining Credits:\n<code>{num_credits}</code>\n\n"
-            f"Press on the <b>Buy Credits</b> button below to purchase more credits!"
+            f"{name}'s Remaining Class Credits:\n<code>{num_credits}</code>\n\n"
+            f"Press on the <b>Buy Class Credits</b> button below to purchase more class credits!"
         )
 
         bot.send_message(
@@ -66,20 +68,18 @@ def callback_query_credits(bot, data):
     message_id = int(data["message_id"])
 
     user = MEMBER_PROFILE_TABLE.get_item(chat_id)
-    student_status = user[MemberProfileFields.STUDENT_STATUS.value]
+    student_status = "Student" if user[MemberProfileFields.STUDENT_STATUS.value] else "Alumni"
 
-    prorated_amount = 10 if student_status else 13
-    package_amount = 25 if student_status else 35
-
-    student_status_string = "Student" if student_status else "Alumni"
+    individual_price = CLASS_PRICING[student_status]["Individual"]
+    package_price = CLASS_PRICING["Package"]
 
     match data["step"]:
-        case Steps.BUY_CREDITS:
+        case CreditsStep.BUY_CREDITS:
             payment_options_message = (
-                f"How many credits would you like?\n\n"
-                f"<b>[{student_status_string} Prices]</b>\n"
-                f"Prorated: ${prorated_amount} per credit\n"
-                f"Pacakge: ${package_amount} for 3 credits"
+                f"How many class credits would you like to buy?\n\n"
+                f"<b>[{student_status} Pricing]</b>\n"
+                f"Individual: ${individual_price} per class credit\n"
+                f"Package: ${package_price} for 3 class credits"
             )
 
             bot.send_message(
@@ -88,21 +88,32 @@ def callback_query_credits(bot, data):
                 parse_mode="HTML",
                 reply_markup=payment_menu_markup(chat_id, message_id),
             )
-        case Steps.PAY_PRORATE:
-            bot.edit_message_text(chat_id=chat_id, message_id=message_id, text="Paying Prorated")
-        case Steps.PAY_PACKAGE:
+        case CreditsStep.PAY_INDIVIDUAL:
+            individual_payment_message = (
+                f"How many class credits would you like to buy?\n\n"
+                f"<b>[{student_status} Pricing]</b>\n"
+                f"Individual: ${individual_price} per class credit\n"
+                f"Package: ${package_price} for 3 class credits"
+            )
+
+            bot.edit_message_text(
+                chat_id=chat_id,
+                message_id=message_id,
+                text=individual_payment_message,
+                parse_mode="HTML",
+                reply_markup=individual_payment_menu_markup(chat_id, message_id),
+            )
+        case CreditsStep.INDIVIDUAL_X1:
+            bot.edit_message_text(chat_id=chat_id, message_id=message_id, text="Buying 1 class credit")
+        case CreditsStep.INDIVIDUAL_X2:
+            bot.edit_message_text(chat_id=chat_id, message_id=message_id, text="Buying 2 class credits")
+        case CreditsStep.PAY_PACKAGE:
             bot.edit_message_text(chat_id=chat_id, message_id=message_id, text="Paying Package")
 
 
 # ======================================================================================================================
 # HELPERS
 # ======================================================================================================================
-
-
-class Steps(str, Enum):
-    BUY_CREDITS = "buy_credits"
-    PAY_PRORATE = "pay_prorate"
-    PAY_PACKAGE = "pay_package"
 
 
 def credits_menu_markup(chat_id: int, message_id: int):
@@ -114,7 +125,7 @@ def credits_menu_markup(chat_id: int, message_id: int):
     :return: The markup for the inline keyboard
     """
 
-    buy_credits_callback_data = f"credits;{Steps.BUY_CREDITS.value};{chat_id};{message_id}"
+    buy_credits_callback_data = pack_callback_data("credits", CreditsStep.BUY_CREDITS, chat_id, message_id)
 
     markup = telebot.util.quick_markup(
         {"Buy Credits": {"callback_data": buy_credits_callback_data}},
@@ -133,16 +144,38 @@ def payment_menu_markup(chat_id: int, message_id: int):
     :return: The markup for the inline keyboard
     """
 
-    payment_prorate_callback_data = f"credits;{Steps.PAY_PRORATE.value};{chat_id};{message_id}"
-    payment_package_callback_data = f"credits;{Steps.PAY_PACKAGE.value};{chat_id};{message_id}"
+    individual_callback_data = pack_callback_data("credits", CreditsStep.PAY_INDIVIDUAL, chat_id, message_id)
+    package_callback_data = pack_callback_data("credits", CreditsStep.PAY_PACKAGE, chat_id, message_id)
 
     markup = telebot.util.quick_markup(
         {
-            "1": {"callback_data": payment_prorate_callback_data},
-            "2": {"callback_data": payment_prorate_callback_data},
-            "3": {"callback_data": payment_package_callback_data},
+            "Individual": {"callback_data": individual_callback_data},
+            "Package": {"callback_data": package_callback_data},
         },
-        row_width=3,
+        row_width=1,
+    )
+
+    return markup
+
+
+def individual_payment_menu_markup(chat_id: int, message_id: int):
+    """
+    Creates an inline keyboard for the individual payment menu
+
+    :param chat_id: The chat_id where this inline keyboard is created
+    :param message_id: The message_id of this inline keyboard
+    :return: The markup for the inline keyboard
+    """
+
+    x1_callback_data = pack_callback_data("credits", CreditsStep.INDIVIDUAL_X1, chat_id, message_id)
+    x2_callback_data = pack_callback_data("credits", CreditsStep.INDIVIDUAL_X2, chat_id, message_id)
+
+    markup = telebot.util.quick_markup(
+        {
+            "Individual": {"callback_data": x1_callback_data},
+            "Package": {"callback_data": x2_callback_data},
+        },
+        row_width=1,
     )
 
     return markup
