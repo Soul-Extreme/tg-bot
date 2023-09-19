@@ -74,7 +74,7 @@ def callback_query_credits(bot, data):
     student_status = "Student" if user[MemberProfileFields.STUDENT_STATUS.value] else "Alumni"
 
     individual_price = CLASS_PRICING[student_status]["Individual"]
-    package_price = CLASS_PRICING["Package"]
+    package_price = CLASS_PRICING[student_status]["Package"]
 
     match data["step"]:
         case CreditsStep.BUY_CREDITS:
@@ -113,18 +113,8 @@ def callback_query_credits(bot, data):
 
 
 def credits_menu_markup(chat_id: int, message_id: int):
-    """
-    Creates the inline keyboard for the credits menu
-
-    :param chat_id: The chat_id where this inline keyboard is created.
-    :param message_id: The message_id of this inline keyboard
-    :return: The markup for the inline keyboard
-    """
-
-    buy_credits_callback_data = pack_callback_data("credits", CreditsStep.BUY_CREDITS, chat_id, message_id)
-
     markup = telebot.util.quick_markup(
-        {"Buy Credits": {"callback_data": buy_credits_callback_data}},
+        {"Buy Credits": {"callback_data": pack_callback_data("credits", CreditsStep.BUY_CREDITS, chat_id, message_id)}},
         row_width=1,
     )
 
@@ -132,21 +122,12 @@ def credits_menu_markup(chat_id: int, message_id: int):
 
 
 def payment_menu_markup(chat_id: int, message_id: int):
-    """
-    Creates an inline keyboard for the payment menu
-
-    :param chat_id: The chat_id where this inline keyboard is created
-    :param message_id: The message_id of this inline keyboard
-    :return: The markup for the inline keyboard
-    """
-
-    individual_callback_data = pack_callback_data("credits", CreditsStep.PAY_INDIVIDUAL, chat_id, message_id)
-    package_callback_data = pack_callback_data("credits", CreditsStep.PAY_PACKAGE, chat_id, message_id)
-
     markup = telebot.util.quick_markup(
         {
-            "Individual": {"callback_data": individual_callback_data},
-            "Package": {"callback_data": package_callback_data},
+            "Individual": {
+                "callback_data": pack_callback_data("credits", CreditsStep.PAY_INDIVIDUAL, chat_id, message_id)
+            },
+            "Package": {"callback_data": pack_callback_data("credits", CreditsStep.PAY_PACKAGE, chat_id, message_id)},
         },
         row_width=1,
     )
@@ -155,23 +136,12 @@ def payment_menu_markup(chat_id: int, message_id: int):
 
 
 def individual_payment_menu_markup(chat_id: int, message_id: int):
-    """
-    Creates an inline keyboard for the individual payment menu
-
-    :param chat_id: The chat_id where this inline keyboard is created
-    :param message_id: The message_id of this inline keyboard
-    :return: The markup for the inline keyboard
-    """
-
-    x1_callback_data = pack_callback_data("credits", CreditsStep.INDIVIDUAL_X1, chat_id, message_id)
-    x2_callback_data = pack_callback_data("credits", CreditsStep.INDIVIDUAL_X2, chat_id, message_id)
-
     markup = telebot.util.quick_markup(
         {
-            "Individual": {"callback_data": x1_callback_data},
-            "Package": {"callback_data": x2_callback_data},
+            "1": {"callback_data": pack_callback_data("credits", CreditsStep.INDIVIDUAL_X1, chat_id, message_id)},
+            "2": {"callback_data": pack_callback_data("credits", CreditsStep.INDIVIDUAL_X2, chat_id, message_id)},
         },
-        row_width=1,
+        row_width=2,
     )
 
     return markup
