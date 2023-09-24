@@ -6,8 +6,6 @@ Date        : 2023-09-01
 Description : Executes the /credits command for the SE Telegram Bot
 """
 
-from enum import Enum
-
 import telebot
 
 from src.resources.table_data.tables import (
