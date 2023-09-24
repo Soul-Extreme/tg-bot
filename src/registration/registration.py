@@ -16,15 +16,19 @@ from src.resources.table_data.tables import (
     PERSONAL_PARTICULARS_TABLE,
     MEMBER_PROFILE_TABLE,
 )
-from src.resources.table_data.personal_particulars_table import PersonalParticularsFields
-from src.resources.table_data.member_profile_table import MemberProfileFields
+from src.resources.table_data.table_fields import (
+    PersonalParticularsFields,
+    MemberProfileFields,
+)
 
-# ======================================================================================================================
+# ==============================================================================
 
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
-se_telegram_bot = telebot.TeleBot(os.getenv("TELEGRAM_BOT_TOKEN"), threaded=False)
+se_telegram_bot = telebot.TeleBot(
+    os.getenv("TELEGRAM_BOT_TOKEN"), threaded=False
+)
 
 
 def handler(event, context):
@@ -35,10 +39,15 @@ def handler(event, context):
         chat_id = int(event_body["User ID"])
 
         if registration_status is True:
-            name = event_body["Preferred Name"] if event_body["Preferred Name"] else event_body["Full Name"]
+            name = (
+                event_body["Preferred Name"]
+                if event_body["Preferred Name"]
+                else event_body["Full Name"]
+            )
             se_telegram_bot.send_message(
                 chat_id=chat_id,
-                text=f"Thank you {name} for registering for Soul Extreme! How may I assist you?",
+                text=f"Thank you {name} for registering for Soul Extreme! "
+                f"How may I assist you?",
             )
 
         return {"statusCode": 200}
@@ -99,19 +108,31 @@ def register_member(form_data):
 
     match personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS]:
         case "Student":
-            personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS] = True
+            personal_particulars_item[
+                PersonalParticularsFields.STUDENT_STATUS
+            ] = True
 
             year = personal_particulars_item[PersonalParticularsFields.YEAR]
-            personal_particulars_item[PersonalParticularsFields.YEAR] = int(year)
+            personal_particulars_item[PersonalParticularsFields.YEAR] = int(
+                year
+            )
 
-            graduation_year = personal_particulars_item[PersonalParticularsFields.GRADUATION_YEAR]
-            personal_particulars_item[PersonalParticularsFields.GRADUATION_YEAR] = int(graduation_year)
+            graduation_year = personal_particulars_item[
+                PersonalParticularsFields.GRADUATION_YEAR
+            ]
+            personal_particulars_item[
+                PersonalParticularsFields.GRADUATION_YEAR
+            ] = int(graduation_year)
 
         case "Alumni":
-            personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS] = False
+            personal_particulars_item[
+                PersonalParticularsFields.STUDENT_STATUS
+            ] = False
 
     try:
-        personal_particulars_state = PERSONAL_PARTICULARS_TABLE.put_item(personal_particulars_item)
+        personal_particulars_state = PERSONAL_PARTICULARS_TABLE.put_item(
+            personal_particulars_item
+        )
         if personal_particulars_state is True:
             print(f"Registration success for {chat_id}!")
     except Exception as error:
@@ -119,7 +140,9 @@ def register_member(form_data):
         return False
 
     # Create member profile
-    student_status = personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS]
+    student_status = personal_particulars_item[
+        PersonalParticularsFields.STUDENT_STATUS
+    ]
     genre = personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS]
 
     member_profile_item = {
@@ -131,7 +154,9 @@ def register_member(form_data):
     }
 
     try:
-        member_profile_state = MEMBER_PROFILE_TABLE.put_item(member_profile_item)
+        member_profile_state = MEMBER_PROFILE_TABLE.put_item(
+            member_profile_item
+        )
         if member_profile_state is True:
             print(f"Member Profile Creation success for {chat_id}!")
     except Exception as error:

@@ -24,6 +24,8 @@ class DynamoDBKeySet:
     Defines a key set for an AWS DynamoDB table.
     """
 
-    def __init__(self, partition_key: DynamoDBKey, sort_key: DynamoDBKey = None):
+    def __init__(
+        self, partition_key: DynamoDBKey, sort_key: DynamoDBKey = None
+    ):
         self.partition_key = partition_key
         self.sort_key = sort_key

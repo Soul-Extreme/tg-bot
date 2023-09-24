@@ -1,11 +1,12 @@
 """
-File        : personal_particulars_table.py
+File        : table_fields.py
 Author      : Diren D Bharwani
 Date        : 2023-09-03
 
 Description :
-    Defines variables pertaining to the personal-particulars dynamoDB table.
-    This file serves as a single source of truth for all variables relating to this table.
+Defines enums for accessing fields of the dynamoDB tables.
+This file serves as a single source of truth for all variables relating to tables.
+Custom fields should be handled specifically within those files/functions.
 """
 
 from enum import Enum
@@ -32,3 +33,17 @@ class PersonalParticularsFields(str, Enum):
     GENRE = "genre"
     SHIRT_SIZE = "shirt_size"
     JACKET_SIZE = "jacket_size"
+
+
+class MemberProfileFields(str, Enum):
+    CHAT_ID = "chat_id"
+    STUDENT_STATUS = "student_status"
+    GENRE = "genre"
+    CREDITS = "credits"
+    ADMIN = "admin"
+
+
+class ChatStateFields(str, Enum):
+    COMMAND = "command"
+    CHAT_ID = "chat_id"
+    TTL = "Time To Live"

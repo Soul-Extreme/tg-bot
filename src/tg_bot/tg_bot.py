@@ -20,7 +20,9 @@ from .commands.function_maps import COMMAND_MAP, CALLBACK_QUERY_MAP
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
-se_telegram_bot = telebot.TeleBot(os.getenv("TELEGRAM_BOT_TOKEN"), threaded=False)
+se_telegram_bot = telebot.TeleBot(
+    os.getenv("TELEGRAM_BOT_TOKEN"), threaded=False
+)
 
 command_list = ["start", "credits"]
 
@@ -58,7 +60,8 @@ def command_dispatch(message):
 @se_telegram_bot.callback_query_handler(func=lambda call: True)
 def callback_dispatch(call):
     """
-    Dispatches callback queries from inline keyboard buttons to their respective handlers
+    Dispatches callback queries from inline keyboard buttons to their
+    respective handlers
     """
 
     data = unpack_callback_data(call.data)

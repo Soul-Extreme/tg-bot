@@ -54,18 +54,19 @@ class DynamoDBTable:
         """
         Retrieves an item from the table.
 
-        :param partition_key_value: The value of a partition key to access an item. There is always a partition key.
-
-        :param sort_key_value: The value of sort key to access an item. This is an optional key and may be ignored if
-        not required.
-
-        :return: The retrieved item as a dict. An empty dict is return if nothing was found.
+        :param partition_key_value: The value of a partition key to access an
+        item.
+        :param sort_key_value: The value of sort key to access an item.
+        :return: The retrieved item as a dict. An empty dict is return if
+        nothing was found.
         """
         try:
             response = None
 
             if self.__keys.sort_key is None:
-                response = self.__table.get_item(Key={self.__keys.partition_key.name: partition_key_value})
+                response = self.__table.get_item(
+                    Key={self.__keys.partition_key.name: partition_key_value}
+                )
             else:
                 response = self.__table.get_item(
                     Key={
@@ -74,7 +75,7 @@ class DynamoDBTable:
                     }
                 )
 
-            return response["Item"]
+            return response["Item"] if response.has_key("Item") else dict()
 
         except KeyError as error:
             alert = f"Item with '{self.__keys.partition_key}': {partition_key_value}"
