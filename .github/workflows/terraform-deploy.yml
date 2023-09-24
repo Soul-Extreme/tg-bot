@@ -7,6 +7,12 @@ on:
     paths:
       - '.github/workflows/terraform-deploy.yml'
       - 'terraform/**'
+  workflow_dispatch:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/terraform-deploy.yml'
+      - 'terraform/**'
 
 env:
   # verbosity setting for Terraform logs
