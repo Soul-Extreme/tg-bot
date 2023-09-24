@@ -38,6 +38,14 @@ CALLBACK_DATA = {
             "command": "credits",
             "step": CreditsStep.PAY_PACKAGE.value,
         },
+        CreditsStep.INDIVIDUAL_X1.value: {
+            "command": "credits",
+            "step": CreditsStep.INDIVIDUAL_X1.value
+        },
+        CreditsStep.INDIVIDUAL_X2.value: {
+            "command": "credits",
+            "step": CreditsStep.INDIVIDUAL_X2.value
+        }
     }
 }
 
