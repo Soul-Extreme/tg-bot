@@ -60,9 +60,7 @@ def command_credits(bot: telebot.TeleBot, message):
         name = user_particulars[PersonalParticularsFields.FULL_NAME.value]
 
         if user_particulars[PersonalParticularsFields.PREFERRED_NAME.value]:
-            name = user_particulars[
-                PersonalParticularsFields.PREFERRED_NAME.value
-            ]
+            name = user_particulars[PersonalParticularsFields.PREFERRED_NAME.value]
 
         num_credits = user_profile[MemberProfileFields.CREDITS.value]
 
@@ -99,9 +97,7 @@ def callback_query_credits(bot, data):
 
     user = MEMBER_PROFILE_TABLE.get_item(chat_id)
     student_status = (
-        "Student"
-        if user[MemberProfileFields.STUDENT_STATUS.value]
-        else "Alumni"
+        "Student" if user[MemberProfileFields.STUDENT_STATUS.value] else "Alumni"
     )
 
     individual_price = CLASS_PRICING[student_status]["Individual"]

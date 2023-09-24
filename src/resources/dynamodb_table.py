@@ -75,7 +75,7 @@ class DynamoDBTable:
                     }
                 )
 
-            return response["Item"] if response.has_key("Item") else dict()
+            return response["Item"] if response.get("Item") else dict()
 
         except KeyError as error:
             alert = f"Item with '{self.__keys.partition_key}': {partition_key_value}"

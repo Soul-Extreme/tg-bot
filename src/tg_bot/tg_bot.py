@@ -20,9 +20,7 @@ from .commands.function_maps import COMMAND_MAP, CALLBACK_QUERY_MAP
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
-se_telegram_bot = telebot.TeleBot(
-    os.getenv("TELEGRAM_BOT_TOKEN"), threaded=False
-)
+se_telegram_bot = telebot.TeleBot(os.getenv("TELEGRAM_BOT_TOKEN"), threaded=False)
 
 command_list = ["start", "credits"]
 

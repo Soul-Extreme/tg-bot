@@ -31,9 +31,7 @@ class CreditsState(str, ConversationState):
     INDIVIDUAL_X2 = "individual_x2"
 
 
-def pack_callback_data(
-    command: str, chat_id: int, next_state: ConversationState
-):
+def pack_callback_data(command: str, chat_id: int, next_state: ConversationState):
     """
     Packs the callback data for a conversation into one string.
     The total length of the string including separators must be under 64 bytes!

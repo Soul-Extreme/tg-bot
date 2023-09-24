@@ -56,8 +56,6 @@ CHAT_STATE_TABLE = DynamoDBTable(
         partition_key=DynamoDBKey(
             ChatStateFields.COMMAND.value, boto3.dynamodb.types.STRING
         ),
-        sort_key=DynamoDBKey(
-            ChatStateFields.CHAT_ID.value, boto3.dynamodb.types.NUMBER
-        ),
+        sort_key=DynamoDBKey(ChatStateFields.CHAT_ID.value, boto3.dynamodb.types.NUMBER),
     ),
 )

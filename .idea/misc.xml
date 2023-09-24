@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Black">
-    <option name="cmdArguments" value="--line-length=80" />
+    <option name="cmdArguments" value="-l 90" />
     <option name="enabledOnReformat" value="true" />
     <option name="enabledOnSave" value="true" />
     <option name="sdkUUID" value="8f128ca7-9fed-45e4-bfa6-511761e29ff4" />

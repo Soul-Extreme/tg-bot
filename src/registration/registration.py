@@ -26,9 +26,7 @@ from src.resources.table_data.table_fields import (
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
-se_telegram_bot = telebot.TeleBot(
-    os.getenv("TELEGRAM_BOT_TOKEN"), threaded=False
-)
+se_telegram_bot = telebot.TeleBot(os.getenv("TELEGRAM_BOT_TOKEN"), threaded=False)
 
 
 def handler(event, context):
@@ -108,26 +106,20 @@ def register_member(form_data):
 
     match personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS]:
         case "Student":
-            personal_particulars_item[
-                PersonalParticularsFields.STUDENT_STATUS
-            ] = True
+            personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS] = True
 
             year = personal_particulars_item[PersonalParticularsFields.YEAR]
-            personal_particulars_item[PersonalParticularsFields.YEAR] = int(
-                year
-            )
+            personal_particulars_item[PersonalParticularsFields.YEAR] = int(year)
 
             graduation_year = personal_particulars_item[
                 PersonalParticularsFields.GRADUATION_YEAR
             ]
-            personal_particulars_item[
-                PersonalParticularsFields.GRADUATION_YEAR
-            ] = int(graduation_year)
+            personal_particulars_item[PersonalParticularsFields.GRADUATION_YEAR] = int(
+                graduation_year
+            )
 
         case "Alumni":
-            personal_particulars_item[
-                PersonalParticularsFields.STUDENT_STATUS
-            ] = False
+            personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS] = False
 
     try:
         personal_particulars_state = PERSONAL_PARTICULARS_TABLE.put_item(
@@ -140,9 +132,7 @@ def register_member(form_data):
         return False
 
     # Create member profile
-    student_status = personal_particulars_item[
-        PersonalParticularsFields.STUDENT_STATUS
-    ]
+    student_status = personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS]
     genre = personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS]
 
     member_profile_item = {
@@ -154,9 +144,7 @@ def register_member(form_data):
     }
 
     try:
-        member_profile_state = MEMBER_PROFILE_TABLE.put_item(
-            member_profile_item
-        )
+        member_profile_state = MEMBER_PROFILE_TABLE.put_item(member_profile_item)
         if member_profile_state is True:
             print(f"Member Profile Creation success for {chat_id}!")
     except Exception as error:
