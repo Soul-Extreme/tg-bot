@@ -13,6 +13,7 @@ TG-BOT:
       Resource:
         - "arn:aws:dynamodb:${self:provider.region}:*:table/personal-particulars"
         - "arn:aws:dynamodb:${self:provider.region}:*:table/member-profile"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/chat-state"
   events:
     - http:
         path: src/tg_bot
