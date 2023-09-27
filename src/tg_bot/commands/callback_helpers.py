@@ -79,14 +79,14 @@ def cache_conversation_state(command: str, chat_id: int, data: Dict = None):
 
     time_in_48_hours = datetime.now() + timedelta(hours=48)
 
-    chat_state_json = {
+    chat_state_item = {
         ChatStateFields.COMMAND.value: command,
         ChatStateFields.CHAT_ID.value: chat_id,
         ChatStateFields.TTL.value: int(time_in_48_hours.timestamp()),
-        "data": data,
+        "data": json.dumps(data),
     }
 
     try:
-        CHAT_STATE_TABLE.put_item(json.dumps(chat_state_json))
+        CHAT_STATE_TABLE.put_item(chat_state_item)
     except Exception as error:
         print(error)

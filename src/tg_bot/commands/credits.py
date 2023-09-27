@@ -92,8 +92,8 @@ def callback_query_credits(bot, data):
     state_json = CHAT_STATE_TABLE.get_item(COMMAND, chat_id)
 
     if bool(state_json):
-        conversation_state = json.loads(state_json)
-        bot.delete_message(chat_id, conversation_state["data"]["message_id"])
+        conversation_state = json.loads(state_json["data"])
+        bot.delete_message(chat_id, conversation_state["message_id"])
 
     user = MEMBER_PROFILE_TABLE.get_item(chat_id)
     student_status = (
