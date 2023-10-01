@@ -37,11 +37,10 @@ def handler(event, context):
         chat_id = int(event_body["User ID"])
 
         if registration_status is True:
-            name = (
-                event_body["Preferred Name"]
-                if event_body["Preferred Name"]
-                else event_body["Full Name"]
-            )
+            name = event_body["Full Name"]
+
+            if event_body["Preferred Name"]:
+                name = event_body["Preferred Name"]
 
             se_telegram_bot.send_message(
                 chat_id=chat_id,

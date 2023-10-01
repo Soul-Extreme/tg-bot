@@ -1,5 +1,5 @@
 """
-File        : start.py
+File        : register.py
 Author      : Diren D Bharwani
 Date        : 2023-09-01
 
@@ -12,12 +12,20 @@ from src.resources.table_data.tables import PERSONAL_PARTICULARS_TABLE
 from src.resources.table_data.table_fields import PersonalParticularsFields
 
 
-# ======================================================================================================================
+# ========================================================================================
+# Variables
+# ========================================================================================
+
+COMMAND = "register"
+
+# ========================================================================================
+# Methods
+# ========================================================================================
 
 
-def command_start(bot: telebot.TeleBot, message):
+def command_register(bot: telebot.TeleBot, message):
     """
-    Runs through the /start command flow:
+    Runs through the /register command flow:
 
     1. Checks for user in DynamoDB Personal Particulars Table
     2a. If user doesn't exist; Prompt Registration through inline keyboard
@@ -44,12 +52,17 @@ def command_start(bot: telebot.TeleBot, message):
             f"If you do not, please contact a committee member."
         )
 
+        markup = telebot.util.quick_markup(
+            {"Register": {"url": "https://forms.gle/ndRGqt3yM8W5QLd26"}},
+            row_width=1,
+        )
+
         bot.send_photo(
             chat_id=chat_id,
             photo="https://i.imgur.com/xNSx2QD.png",
             caption=registration_prompt_message,
             parse_mode="HTML",
-            reply_markup=prompt_registration_markup(),
+            reply_markup=markup,
         )
 
     else:
@@ -59,24 +72,3 @@ def command_start(bot: telebot.TeleBot, message):
             name = user[PersonalParticularsFields.PREFERRED_NAME.value]
 
         bot.send_message(chat_id, f"Welcome back {name}! How may I assist you?")
-
-
-# ======================================================================================================================
-# HELPERS
-# ======================================================================================================================
-
-
-def prompt_registration_markup():
-    """
-    Creates the inline keyboard to prompt Registration
-
-    :return: The markup for the inline keyboard
-    """
-
-    # The values in each button for an inline keyboard will only execute the first kwarg. Multiple is not supported!
-    markup = telebot.util.quick_markup(
-        {"Register": {"url": "https://forms.gle/ndRGqt3yM8W5QLd26"}},
-        row_width=1,
-    )
-
-    return markup
