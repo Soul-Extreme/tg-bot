@@ -12,8 +12,8 @@ import json
 
 import telebot
 
-from .commands.callback_helpers import unpack_callback_data
-from .commands.function_maps import COMMAND_MAP, CALLBACK_QUERY_MAP
+from .command_function_maps import COMMAND_MAP, CALLBACK_QUERY_MAP
+from .callback_helpers import unpack_callback_data
 
 # ======================================================================================================================
 

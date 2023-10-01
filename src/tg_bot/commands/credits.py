@@ -10,10 +10,9 @@ import json
 
 import telebot
 
-from .conversation_state import CreditsState, cache_conversation_state
-from .markup_helpers import generate_button_definition, generate_markup
+from src.tg_bot.conversation_state import ConversationState, cache_conversation_state
+from src.tg_bot.markup_helpers import generate_button_definition, generate_markup
 from src.resources.table_data.table_fields import (
-    PersonalParticularsFields,
     MemberProfileFields,
 )
 from src.resources.table_data.tables import (
@@ -36,6 +35,16 @@ COMMAND = "credits"
 # ========================================================================================
 # State Graph
 # ========================================================================================
+
+
+class CreditsState(ConversationState):
+    CREDITS_MENU = "credits_menu"
+    BUY_CREDITS = "buy_credits"
+    PAY_INDIVIDUAL = "pay_individual"
+    PAY_PACKAGE = "pay_package"
+    INDIVIDUAL_X1 = "individual_x1"
+    INDIVIDUAL_X2 = "individual_x2"
+
 
 CreditsState.CREDITS_MENU.next_states = [CreditsState.BUY_CREDITS]
 

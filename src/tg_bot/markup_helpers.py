@@ -24,8 +24,7 @@ def generate_button_definition(
     back_button: bool = False,
 ):
     """
-    Creates button definitions based on the conversation state.
-    At least one next state must be defined!
+    Creates button definitions based on the conversation state. At least one next state must be defined!
 
     :param button_names: A list of strings for the names of each button. This must match the number of next_states!
     :param command: The command this button originates from
@@ -35,8 +34,10 @@ def generate_button_definition(
     :return: The markup definition for a button as a dictionary
     """
 
-    button_definitions = {}
+    assert len(conversation_state.next_states) > 0
+    assert len(button_names) == len(conversation_state.next_states)
 
+    button_definitions = {}
     for i in range(0, len(button_names)):
         button_definitions[button_names[i]] = {
             "callback_data": pack_callback_data(
@@ -45,6 +46,7 @@ def generate_button_definition(
         }
 
     if back_button:
+        assert conversation_state.prev_state is not None
         button_definitions["Back"] = {
             "callback_data": pack_callback_data(
                 command, chat_id, conversation_state.prev_state

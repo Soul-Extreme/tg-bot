@@ -17,22 +17,13 @@ from src.resources.table_data.table_fields import ChatStateFields
 # ========================================================================================
 
 
-class ConversationState(Enum):
-    def __init__(self):
+class ConversationState(str, Enum):
+    def __init__(self, _):
         self.prev_state = None
         self.next_states = []
 
     def __str__(self):
         return self.value
-
-
-class CreditsState(str, ConversationState):
-    CREDITS_MENU = "credits_menu"
-    BUY_CREDITS = "buy_credits"
-    PAY_INDIVIDUAL = "pay_individual"
-    PAY_PACKAGE = "pay_package"
-    INDIVIDUAL_X1 = "individual_x1"
-    INDIVIDUAL_X2 = "individual_x2"
 
 
 def cache_conversation_state(command: str, chat_id: int, data: Dict = None):
