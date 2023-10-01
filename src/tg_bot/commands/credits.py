@@ -10,11 +10,8 @@ import json
 
 import telebot
 
-from .callback_helpers import (
-    CreditsState,
-    pack_callback_data,
-    cache_conversation_state,
-)
+from .conversation_state import CreditsState, cache_conversation_state
+from .markup_helpers import generate_button_definition, generate_markup
 from src.resources.table_data.table_fields import (
     PersonalParticularsFields,
     MemberProfileFields,
@@ -25,7 +22,9 @@ from src.resources.table_data.tables import (
     CHAT_STATE_TABLE,
 )
 
-# ==============================================================================
+# ========================================================================================
+# Variables
+# ========================================================================================
 
 CLASS_PRICING = {
     "Student": {"Individual": 10, "Package": 25},
@@ -33,6 +32,38 @@ CLASS_PRICING = {
 }
 
 COMMAND = "credits"
+
+# ========================================================================================
+# State Graph
+# ========================================================================================
+
+CreditsState.CREDITS_MENU.next_states = [CreditsState.BUY_CREDITS]
+
+CreditsState.BUY_CREDITS.prev_state = CreditsState.CREDITS_MENU
+CreditsState.BUY_CREDITS.next_states = [
+    CreditsState.PAY_INDIVIDUAL,
+    CreditsState.PAY_PACKAGE,
+]
+
+CreditsState.PAY_INDIVIDUAL.prev_state = CreditsState.BUY_CREDITS
+CreditsState.PAY_INDIVIDUAL.next_states = [
+    CreditsState.INDIVIDUAL_X1,
+    CreditsState.INDIVIDUAL_X2,
+]
+
+CreditsState.PAY_PACKAGE.prev_state = CreditsState.BUY_CREDITS
+CreditsState.PAY_PACKAGE.next_states = [CreditsState.CREDITS_MENU]
+
+CreditsState.INDIVIDUAL_X1.prev_state = CreditsState.PAY_INDIVIDUAL
+CreditsState.INDIVIDUAL_X1.next_states = [CreditsState.CREDITS_MENU]
+
+CreditsState.INDIVIDUAL_X2.prev_state = CreditsState.PAY_INDIVIDUAL
+CreditsState.INDIVIDUAL_X2.next_states = [CreditsState.CREDITS_MENU]
+
+
+# ========================================================================================
+# Methods
+# ========================================================================================
 
 
 def command_credits(bot: telebot.TeleBot, message):
@@ -45,10 +76,9 @@ def command_credits(bot: telebot.TeleBot, message):
     """
 
     chat_id = message.chat.id
-    user_profile = MEMBER_PROFILE_TABLE.get_item(chat_id)
     user_particulars = PERSONAL_PARTICULARS_TABLE.get_item(chat_id)
 
-    if not user_profile:
+    if not user_particulars:
         missing_user_message = (
             "Sorry 😥 your profile was not found within our database!\n"
             "Please run the /start command to register with us!"
@@ -57,36 +87,11 @@ def command_credits(bot: telebot.TeleBot, message):
         bot.send_message(chat_id=chat_id, text=missing_user_message)
 
     else:
-        name = user_particulars[PersonalParticularsFields.FULL_NAME.value]
-
-        if user_particulars[PersonalParticularsFields.PREFERRED_NAME.value]:
-            name = user_particulars[PersonalParticularsFields.PREFERRED_NAME.value]
-
-        num_credits = user_profile[MemberProfileFields.CREDITS.value]
-
-        credits_info_message = (
-            f"{name}'s Remaining Class Credits:\n<code>{num_credits}</code>\n\n"
-            f"Press on the <b>Buy Class Credits</b> button below to purchase "
-            f"more class credits!"
-        )
-
-        message = bot.send_message(
-            chat_id=chat_id,
-            text=credits_info_message,
-            parse_mode="HTML",
-            reply_markup=credits_menu_markup(chat_id),
-        )
-
-        cache_data = {
-            "step": CreditsState.CREDITS_MENU.value,
-            "message_id": message.id,
-        }
-        cache_conversation_state(COMMAND, chat_id, cache_data)
+        state_handler(bot, chat_id, CreditsState.CREDITS_MENU)
 
 
 def callback_query_credits(bot, data):
     chat_id = data["chat_id"]
-    next_state = data["next_state"]
 
     # Delete previous message then send new message
     state_json = CHAT_STATE_TABLE.get_item(COMMAND, chat_id)
@@ -95,62 +100,7 @@ def callback_query_credits(bot, data):
         conversation_state = json.loads(state_json["data"])
         bot.delete_message(chat_id, conversation_state["message_id"])
 
-    user = MEMBER_PROFILE_TABLE.get_item(chat_id)
-    student_status = (
-        "Student" if user[MemberProfileFields.STUDENT_STATUS.value] else "Alumni"
-    )
-
-    individual_price = CLASS_PRICING[student_status]["Individual"]
-    package_price = CLASS_PRICING[student_status]["Package"]
-
-    match next_state:
-        case CreditsState.BUY_CREDITS:
-            payment_options_message = (
-                f"How many class credits would you like to buy?\n\n"
-                f"<b>[{student_status} Pricing]</b>\n"
-                f"Individual: ${individual_price} per class credit\n"
-                f"Package: ${package_price} for 3 class credits"
-            )
-
-            message = bot.send_message(
-                chat_id=chat_id,
-                text=payment_options_message,
-                parse_mode="HTML",
-                reply_markup=payment_menu_markup(chat_id),
-            )
-
-            cache_data = {
-                "step": CreditsState.BUY_CREDITS.value,
-                "message_id": message.id,
-            }
-            cache_conversation_state(COMMAND, chat_id, cache_data)
-
-        case CreditsState.PAY_INDIVIDUAL:
-            payment_options_message = (
-                f"How many class credits would you like to buy?\n\n"
-                f"<b>[{student_status} Pricing]</b>\n"
-                f"${individual_price} per class credit"
-            )
-
-            message = bot.send_message(
-                chat_id=chat_id,
-                text=payment_options_message,
-                parse_mode="HTML",
-                reply_markup=individual_payment_menu_markup(chat_id),
-            )
-
-            cache_data = {
-                "step": CreditsState.BUY_CREDITS.value,
-                "message_id": message.id,
-            }
-            cache_conversation_state("credits", chat_id, cache_data)
-
-        case CreditsState.INDIVIDUAL_X1:
-            bot.send_message(chat_id=chat_id, text="Buying 1 class credit")
-        case CreditsState.INDIVIDUAL_X2:
-            bot.send_message(chat_id=chat_id, text="Buying 2 class credits")
-        case CreditsState.PAY_PACKAGE:
-            bot.send_message(chat_id=chat_id, text="Paying Package")
+    state_handler(data["next_state"])
 
 
 # ==============================================================================
@@ -158,56 +108,98 @@ def callback_query_credits(bot, data):
 # ==============================================================================
 
 
-def credits_menu_markup(chat_id: int):
-    markup = telebot.util.quick_markup(
-        {
-            "Buy Credits": {
-                "callback_data": pack_callback_data(
-                    COMMAND, chat_id, CreditsState.BUY_CREDITS
-                )
-            }
-        },
-        row_width=1,
+def state_handler(bot, chat_id, conversation_state: CreditsState):
+    message_text = ""
+    button_definitions = {}
+    row_width = 1
+    cache = True
+
+    match conversation_state:
+        case CreditsState.CREDITS_MENU:
+            user_profile = MEMBER_PROFILE_TABLE.get_item(chat_id)
+
+            name = user_profile[MemberProfileFields.NAME.value]
+            num_credits = user_profile[MemberProfileFields.CREDITS.value]
+
+            message_text = (
+                f"{name}'s Remaining Class Credits:\n"
+                f"<code>{num_credits}</code>\n\n"
+                f"Press on the <b>Buy Class Credits</b> button below to purchase "
+                f"more class credits!"
+            )
+
+            button_definitions = generate_button_definition(
+                ["Buy Credits"], COMMAND, chat_id, conversation_state
+            )
+
+        case CreditsState.BUY_CREDITS:
+            user_profile = MEMBER_PROFILE_TABLE.get_item(chat_id)
+
+            student_status = (
+                "Student"
+                if user_profile[MemberProfileFields.STUDENT_STATUS.value]
+                else "Alumni"
+            )
+
+            individual_price = CLASS_PRICING[student_status]["Individual"]
+            package_price = CLASS_PRICING[student_status]["Package"]
+
+            message_text = (
+                f"How many class credits would you like to buy?\n\n"
+                f"<b>[{student_status} Pricing]</b>\n"
+                f"Individual: ${individual_price} per class credit\n"
+                f"Package: ${package_price} for 3 class credits"
+            )
+
+            button_definitions = generate_button_definition(
+                ["Individual", "Package"], COMMAND, chat_id, conversation_state, True
+            )
+
+        case CreditsState.PAY_PACKAGE:
+            bot.send_message(chat_id=chat_id, text="Paying Package")
+            return
+
+        case CreditsState.PAY_INDIVIDUAL:
+            user_profile = MEMBER_PROFILE_TABLE.get_item(chat_id)
+
+            student_status = (
+                "Student"
+                if user_profile[MemberProfileFields.STUDENT_STATUS.value]
+                else "Alumni"
+            )
+
+            individual_price = CLASS_PRICING[student_status]["Individual"]
+
+            message_text = (
+                f"How many class credits would you like to buy?\n\n"
+                f"<b>[{student_status} Pricing]</b>\n"
+                f"${individual_price} per class credit"
+            )
+
+            button_definitions = generate_button_definition(
+                ["1", "2"], COMMAND, chat_id, conversation_state, True
+            )
+
+            row_width = 2
+
+        case CreditsState.INDIVIDUAL_X1:
+            bot.send_message(chat_id=chat_id, text="Paying 1")
+            return
+
+        case CreditsState.INDIVIDUAL_X2:
+            bot.send_message(chat_id=chat_id, text="Paying 2")
+            return
+
+    message = bot.send_message(
+        chat_id=chat_id,
+        text=message_text,
+        parse_mode="HTML",
+        reply_markup=generate_markup(button_definitions, row_width),
     )
 
-    return markup
-
-
-def payment_menu_markup(chat_id: int):
-    markup = telebot.util.quick_markup(
-        {
-            "Individual": {
-                "callback_data": pack_callback_data(
-                    COMMAND, chat_id, CreditsState.PAY_INDIVIDUAL
-                )
-            },
-            "Package": {
-                "callback_data": pack_callback_data(
-                    COMMAND, chat_id, CreditsState.PAY_PACKAGE
-                )
-            },
-        },
-        row_width=1,
-    )
-
-    return markup
-
-
-def individual_payment_menu_markup(chat_id: int):
-    markup = telebot.util.quick_markup(
-        {
-            "1": {
-                "callback_data": pack_callback_data(
-                    COMMAND, chat_id, CreditsState.INDIVIDUAL_X1
-                )
-            },
-            "2": {
-                "callback_data": pack_callback_data(
-                    COMMAND, chat_id, CreditsState.INDIVIDUAL_X2
-                )
-            },
-        },
-        row_width=2,
-    )
-
-    return markup
+    if cache:
+        cache_data = {
+            "state": conversation_state.value,
+            "message_id": message.id,
+        }
+        cache_conversation_state(COMMAND, chat_id, cache_data)

@@ -42,10 +42,12 @@ def handler(event, context):
                 if event_body["Preferred Name"]
                 else event_body["Full Name"]
             )
+
             se_telegram_bot.send_message(
                 chat_id=chat_id,
                 text=f"Thank you {name} for registering for Soul Extreme! "
                 f"How may I assist you?",
+                disable_notification=False,
             )
 
         return {"statusCode": 200}
@@ -134,11 +136,16 @@ def register_member(form_data):
     # Create member profile
     student_status = personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS]
     genre = personal_particulars_item[PersonalParticularsFields.STUDENT_STATUS]
+    name = personal_particulars_item[PersonalParticularsFields.FULL_NAME]
+
+    if personal_particulars_item.get(PersonalParticularsFields.PREFERRED_NAME):
+        name = personal_particulars_item[PersonalParticularsFields.PREFERRED_NAME]
 
     member_profile_item = {
         MemberProfileFields.CREDITS: 0,
         MemberProfileFields.ADMIN: False,
         MemberProfileFields.CHAT_ID: int(chat_id),
+        MemberProfileFields.NAME: name,
         MemberProfileFields.STUDENT_STATUS: student_status,
         MemberProfileFields.GENRE: genre,
     }

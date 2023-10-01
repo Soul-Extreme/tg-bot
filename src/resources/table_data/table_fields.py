@@ -37,6 +37,7 @@ class PersonalParticularsFields(str, Enum):
 
 class MemberProfileFields(str, Enum):
     CHAT_ID = "chat_id"
+    NAME = "name"
     STUDENT_STATUS = "student_status"
     GENRE = "genre"
     CREDITS = "credits"

@@ -6,29 +6,9 @@ Date        : 2023-08-30
 Description : Helper methods for dealing with callback data
 """
 
-import json
-from datetime import datetime, timedelta
-from enum import Enum
-from typing import Dict
+from .conversation_state import ConversationState
 
-from src.resources.table_data.tables import CHAT_STATE_TABLE
-from src.resources.table_data.table_fields import ChatStateFields
-
-# ======================================================================================================================
-
-
-class ConversationState(Enum):
-    def __str__(self):
-        return self.value
-
-
-class CreditsState(str, ConversationState):
-    CREDITS_MENU = "credits_menu"
-    BUY_CREDITS = "buy_credits"
-    PAY_INDIVIDUAL = "pay_individual"
-    PAY_PACKAGE = "pay_package"
-    INDIVIDUAL_X1 = "individual_x1"
-    INDIVIDUAL_X2 = "individual_x2"
+# ========================================================================================
 
 
 def pack_callback_data(command: str, chat_id: int, next_state: ConversationState):
@@ -60,33 +40,3 @@ def unpack_callback_data(callback_data: str):
     }
 
     return data
-
-
-def cache_conversation_state(command: str, chat_id: int, data: Dict = None):
-    """
-    Caches the conversation state into a DynamoDB Table.
-
-    :param command: The command where this conversation starts
-    :param chat_id: The chat_id where this data originates from
-    :param data: A dictionary of custom data to store in JSON format.
-    :return: The packed callback data
-    """
-    if data is None:
-        data = {}
-
-    if not isinstance(data, dict):
-        raise TypeError("data must be a dictionary!")
-
-    time_in_48_hours = datetime.now() + timedelta(hours=48)
-
-    chat_state_item = {
-        ChatStateFields.COMMAND.value: command,
-        ChatStateFields.CHAT_ID.value: chat_id,
-        ChatStateFields.TTL.value: int(time_in_48_hours.timestamp()),
-        "data": json.dumps(data),
-    }
-
-    try:
-        CHAT_STATE_TABLE.put_item(chat_state_item)
-    except Exception as error:
-        print(error)
