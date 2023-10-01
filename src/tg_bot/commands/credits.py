@@ -7,14 +7,15 @@ Description : Executes the /credits command for the SE Telegram Bot
 """
 
 import json
+import os
+from datetime import datetime, timedelta
 
 import telebot
+from telebot.types import LabeledPrice
 
 from src.tg_bot.conversation_state import ConversationState, cache_conversation_state
 from src.tg_bot.markup_helpers import generate_button_definition, generate_markup
-from src.resources.table_data.table_fields import (
-    MemberProfileFields,
-)
+from src.resources.table_data.table_fields import MemberProfileFields
 from src.resources.table_data.tables import (
     PERSONAL_PARTICULARS_TABLE,
     MEMBER_PROFILE_TABLE,
@@ -31,6 +32,8 @@ CLASS_PRICING = {
 }
 
 COMMAND = "credits"
+
+STRIPE_TOKEN = os.getenv("STRIPE_TOKEN")
 
 # ========================================================================================
 # State Graph
@@ -119,9 +122,6 @@ def callback_query_credits(bot, data):
 
 
 def state_handler(bot, chat_id, conversation_state: CreditsState):
-    message_text = ""
-    button_definitions = {}
-    row_width = 1
     cache = True
 
     match conversation_state:
@@ -140,6 +140,13 @@ def state_handler(bot, chat_id, conversation_state: CreditsState):
 
             button_definitions = generate_button_definition(
                 ["Buy Credits"], COMMAND, chat_id, conversation_state
+            )
+
+            message = bot.send_message(
+                chat_id=chat_id,
+                text=message_text,
+                parse_mode="HTML",
+                reply_markup=generate_markup(button_definitions, row_width=1),
             )
 
         case CreditsState.BUY_CREDITS:
@@ -165,9 +172,42 @@ def state_handler(bot, chat_id, conversation_state: CreditsState):
                 ["Individual", "Package"], COMMAND, chat_id, conversation_state, True
             )
 
+            message = bot.send_message(
+                chat_id=chat_id,
+                text=message_text,
+                parse_mode="HTML",
+                reply_markup=generate_markup(button_definitions, row_width=1),
+            )
+
         case CreditsState.PAY_PACKAGE:
-            bot.send_message(chat_id=chat_id, text="Paying Package")
-            return
+            user_profile = MEMBER_PROFILE_TABLE.get_item(chat_id)
+
+            student_status = (
+                "Student"
+                if user_profile[MemberProfileFields.STUDENT_STATUS.value]
+                else "Alumni"
+            )
+
+            price = CLASS_PRICING[student_status]["Package"]
+            expiry_time = (datetime.now() + timedelta(minutes=5)).strftime("%I:%M:%S %p")
+
+            message_text = (
+                f"Please make a payment of S${price} for 3 class credits!\n\n"
+                f"The payment will time out in 5 minutes at {expiry_time}."
+            )
+
+            bot.send_invoice(
+                chat_id=chat_id,
+                title=f"{student_status} Package Class Credits",
+                description=message_text,
+                invoice_payload=f"{student_status} Package Class Credits",
+                provider_token=STRIPE_TOKEN,
+                currency="SGD",
+                prices=[LabeledPrice("3 Class Credits", price)],
+                is_flexible=False,
+            )
+
+            cache = False
 
         case CreditsState.PAY_INDIVIDUAL:
             user_profile = MEMBER_PROFILE_TABLE.get_item(chat_id)
@@ -190,7 +230,12 @@ def state_handler(bot, chat_id, conversation_state: CreditsState):
                 ["1", "2"], COMMAND, chat_id, conversation_state, True
             )
 
-            row_width = 2
+            message = bot.send_message(
+                chat_id=chat_id,
+                text=message_text,
+                parse_mode="HTML",
+                reply_markup=generate_markup(button_definitions, row_width=2),
+            )
 
         case CreditsState.INDIVIDUAL_X1:
             bot.send_message(chat_id=chat_id, text="Paying 1")
@@ -199,13 +244,6 @@ def state_handler(bot, chat_id, conversation_state: CreditsState):
         case CreditsState.INDIVIDUAL_X2:
             bot.send_message(chat_id=chat_id, text="Paying 2")
             return
-
-    message = bot.send_message(
-        chat_id=chat_id,
-        text=message_text,
-        parse_mode="HTML",
-        reply_markup=generate_markup(button_definitions, row_width),
-    )
 
     if cache:
         cache_data = {

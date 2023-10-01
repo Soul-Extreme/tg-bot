@@ -43,6 +43,7 @@ jobs:
       - name: Setup Environment
         run: |
           echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}" >> $GITHUB_ENV
+          echo "STRIPE_TOKEN=${{ secrets.STRIPE_TOKEN }}" >> $GITHUB_ENV
 
       - name: Serverless Deploy
         env:

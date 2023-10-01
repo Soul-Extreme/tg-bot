@@ -20,3 +20,4 @@ TG-BOT:
         method: post
   environment:
     TELEGRAM_BOT_TOKEN: ${env:TELEGRAM_BOT_TOKEN}
+    STRIPE_TOKEN: ${env.STRIPE_TOKEN}
