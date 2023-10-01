@@ -12,7 +12,7 @@ import json
 
 import telebot
 
-from .command_function_maps import COMMAND_MAP, CALLBACK_QUERY_MAP
+from .command_function_maps import COMMAND_LIST, COMMAND_MAP, CALLBACK_QUERY_MAP
 from .callback_helpers import unpack_callback_data
 
 # ======================================================================================================================
@@ -21,8 +21,6 @@ logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 
 se_telegram_bot = telebot.TeleBot(os.getenv("TELEGRAM_BOT_TOKEN"), threaded=False)
-
-command_list = ["start", "credits"]
 
 
 def handler(event, context):
@@ -45,15 +43,13 @@ def handler(event, context):
 # ======================================================================================================================
 
 
-@se_telegram_bot.message_handler(commands=command_list)
+@se_telegram_bot.message_handler(commands=COMMAND_LIST)
 def command_dispatch(message):
     """
     Dispatches commands message to their respective handlers
     """
 
     command = message.text.removeprefix("/")
-    print(f"Command Invoked: {command}")
-
     COMMAND_MAP[command](se_telegram_bot, message)
 
 

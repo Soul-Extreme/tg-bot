@@ -11,6 +11,8 @@ from src.tg_bot.commands.credits import command_credits, callback_query_credits
 
 # ======================================================================================================================
 
+COMMAND_LIST = ["register", "credits"]
+
 COMMAND_MAP = {"register": command_register, "credits": command_credits}
 
 CALLBACK_QUERY_MAP = {"credits": callback_query_credits}
