@@ -196,6 +196,8 @@ def state_handler(bot, chat_id, conversation_state: CreditsState):
                 f"The payment will time out in 5 minutes at {expiry_time}."
             )
 
+            print(STRIPE_TOKEN)
+
             bot.send_invoice(
                 chat_id=chat_id,
                 title=f"{student_status} Package Class Credits",
