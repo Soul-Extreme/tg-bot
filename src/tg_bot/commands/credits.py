@@ -109,7 +109,7 @@ def callback_query_credits(bot, data):
         conversation_state = json.loads(state_json["data"])
         bot.delete_message(chat_id, conversation_state["message_id"])
 
-    state_handler(data["next_state"])
+    state_handler(bot, chat_id, data["next_state"])
 
 
 # ==============================================================================
