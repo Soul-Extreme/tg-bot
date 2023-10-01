@@ -35,6 +35,8 @@ def command_register(bot: telebot.TeleBot, message):
     :param message: The message received from the telegram server
     """
 
+    print("Calling Register Command")
+
     chat_id = message.chat.id
     user = PERSONAL_PARTICULARS_TABLE.get_item(chat_id)
 

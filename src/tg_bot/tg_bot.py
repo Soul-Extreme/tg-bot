@@ -52,6 +52,8 @@ def command_dispatch(message):
     """
 
     command = message.text.removeprefix("/")
+    print(f"Command Invoked: {command}")
+
     COMMAND_MAP[command](se_telegram_bot, message)
 
 
