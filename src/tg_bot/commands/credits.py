@@ -101,6 +101,7 @@ def command_credits(bot: telebot.TeleBot, message):
 
 def callback_query_credits(bot, data):
     chat_id = data["chat_id"]
+    next_state = data["next_state"]
 
     # Delete previous message then send new message
     state_json = CHAT_STATE_TABLE.get_item(COMMAND, chat_id)
@@ -109,7 +110,7 @@ def callback_query_credits(bot, data):
         conversation_state = json.loads(state_json["data"])
         bot.delete_message(chat_id, conversation_state["message_id"])
 
-    state_handler(bot, chat_id, data["next_state"])
+    state_handler(bot, chat_id, CreditsState(next_state))
 
 
 # ==============================================================================

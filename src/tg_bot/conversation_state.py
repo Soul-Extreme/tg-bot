@@ -54,3 +54,6 @@ def cache_conversation_state(command: str, chat_id: int, data: Dict = None):
         CHAT_STATE_TABLE.put_item(chat_state_item)
     except Exception as error:
         print(error)
+
+
+# TODO: Clear cached state
