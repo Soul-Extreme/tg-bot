@@ -62,3 +62,14 @@ def callback_dispatch(call):
 
     data = unpack_callback_data(call.data)
     CALLBACK_QUERY_MAP[data["command"]](se_telegram_bot, data)
+
+
+@se_telegram_bot.pre_checkout_query_handler(func=lambda query: True)
+def checkout(pre_checkout_query):
+    print(pre_checkout_query)
+
+    se_telegram_bot.answer_pre_checkout_query(
+        pre_checkout_query.id,
+        ok=True,
+        error_message="Failed to make payment! Please contact a committee member!",
+    )

@@ -97,8 +97,37 @@ def command_credits(bot: telebot.TeleBot, message):
         )
 
         bot.send_message(chat_id=chat_id, text=missing_user_message)
-
     else:
+        state_handler(bot, chat_id, CreditsState.CREDITS_MENU)
+
+
+def command_successful_payment(bot: telebot.Telebot, message):
+    """
+    Displays an inline keyboard with the number of credits after a successful payment.
+
+    :param bot: The telebot invoking this command.
+    :param message: The message received from the telegram server
+    """
+
+    chat_id = message.chat_id
+    user_particulars = PERSONAL_PARTICULARS_TABLE.get_item(chat_id)
+
+    if not user_particulars:
+        bot.send_message(
+            chat_id=chat_id,
+            text=(
+                "Error, user could not be found! \n"
+                "Please contact a committee member immediately!"
+            ),
+        )
+    else:
+        # Delete previous payment message then send new message
+        state_json = CHAT_STATE_TABLE.get_item(COMMAND, chat_id)
+
+        if bool(state_json):
+            conversation_state = json.loads(state_json["data"])
+            bot.delete_message(chat_id, conversation_state["message_id"])
+
         state_handler(bot, chat_id, CreditsState.CREDITS_MENU)
 
 
@@ -122,8 +151,6 @@ def callback_query_credits(bot, data):
 
 
 def state_handler(bot, chat_id, conversation_state: CreditsState):
-    cache = True
-
     match conversation_state:
         case CreditsState.CREDITS_MENU:
             user_profile = MEMBER_PROFILE_TABLE.get_item(chat_id)
@@ -203,8 +230,6 @@ def state_handler(bot, chat_id, conversation_state: CreditsState):
                 is_flexible=False,
             )
 
-            cache = False
-
         case CreditsState.PAY_INDIVIDUAL:
             user_profile = MEMBER_PROFILE_TABLE.get_item(chat_id)
 
@@ -241,9 +266,8 @@ def state_handler(bot, chat_id, conversation_state: CreditsState):
             bot.send_message(chat_id=chat_id, text="Paying 2")
             return
 
-    if cache:
-        cache_data = {
-            "state": conversation_state.value,
-            "message_id": message.id,
-        }
-        cache_conversation_state(COMMAND, chat_id, cache_data)
+    cache_data = {
+        "state": conversation_state.value,
+        "message_id": message.id,
+    }
+    cache_conversation_state(COMMAND, chat_id, cache_data)
