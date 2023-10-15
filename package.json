@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "lint": "python -m black src/"
+    "fmt": "python -m black src/"
   },
   "license": "MIT",
   "devDependencies": {

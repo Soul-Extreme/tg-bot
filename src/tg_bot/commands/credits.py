@@ -189,19 +189,13 @@ def state_handler(bot, chat_id, conversation_state: CreditsState):
             )
 
             price = CLASS_PRICING[student_status]["Package"]
-            expiry_time = (datetime.now() + timedelta(minutes=5)).strftime("%I:%M:%S %p")
 
-            message_text = (
-                f"Please make a payment of S${price} for 3 class credits!\n\n"
-                f"The payment will time out in 5 minutes at {expiry_time}."
-            )
-
-            prices = [LabeledPrice("3 Class Credits", price * 10)]
+            prices = [LabeledPrice("3 Class Credits", price * 100)]
 
             bot.send_invoice(
                 chat_id=chat_id,
                 title=f"{student_status} Package Class Credits",
-                description=message_text,
+                description=f"Please make a payment of S${price} for 3 class credits!",
                 invoice_payload=f"{student_status} Package Class Credits",
                 provider_token=STRIPE_TOKEN,
                 currency="sgd",
