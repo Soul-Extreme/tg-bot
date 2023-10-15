@@ -101,7 +101,7 @@ def command_credits(bot: telebot.TeleBot, message):
         state_handler(bot, chat_id, CreditsState.CREDITS_MENU)
 
 
-def command_successful_payment(bot: telebot.Telebot, message):
+def command_successful_payment(bot: telebot.TeleBot, message):
     """
     Displays an inline keyboard with the number of credits after a successful payment.
 
